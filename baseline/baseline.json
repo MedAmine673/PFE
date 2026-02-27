@@ -1,0 +1,24 @@
+{
+    "roles_audit": {
+        "max_global_admins": 3,
+        "critical_roles": [
+            "Global Administrator",
+            "Privileged Role Administrator",
+            "Security Administrator",
+            "Application Administrator",
+            "Cloud Application Administrator"
+        ],
+        "forbidden_roles": [
+            "Helpdesk Administrator"
+        ]
+    },
+    "mfa_audit": {
+        "require_mfa_for_admins": true,
+        "allowed_mfa_methods": ["auth_app", "fido2", "hello"],
+        "check_conditional_access": true
+    },
+    "activity_audit": {
+        "max_inactivity_days": 90,
+        "alert_on_never_logged_in": true
+    }
+}

@@ -1,0 +1,20 @@
+[
+    {
+        "userPrincipalName": "MedAmine@335lzf.onmicrosoft.com",
+        "displayName": "Mohamed Amine BEN OUHIBA",
+        "roleName": "Global Administrator",
+        "userId": "04a75dd8-508e-43f5-85c4-9e07db469c8a"
+    },
+    {
+        "userPrincipalName": "test@335lzf.onmicrosoft.com",
+        "displayName": "test",
+        "roleName": "Global Administrator",
+        "userId": "005e05ee-c776-4f42-89bb-baa73672f4e6"
+    },
+    {
+        "userPrincipalName": "test@335lzf.onmicrosoft.com",
+        "displayName": "test",
+        "roleName": "License Administrator",
+        "userId": "005e05ee-c776-4f42-89bb-baa73672f4e6"
+    }
+]

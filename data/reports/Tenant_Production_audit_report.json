@@ -1,0 +1,29 @@
+[
+    {
+        "Control ID": "AAD-01",
+        "Category": "Roles",
+        "Requirement": "Nombre de GA entre 2 et 3",
+        "Result": "Pass",
+        "Criticality": "High",
+        "Affected": 2,
+        "Details": "2 Global Admin(s) trouvé(s) : Mohamed Amine BEN OUHIBA, test"
+    },
+    {
+        "Control ID": "AAD-02",
+        "Category": "Roles",
+        "Requirement": "Aucun rôle critique permanent (PIM obligatoire)",
+        "Result": "Fail",
+        "Criticality": "Critical",
+        "Affected": 5,
+        "Details": "3 rôle(s) critique(s) permanent(s) : Global Administrator (Mohamed Amine BEN OUHIBA, test); Security Administrator (azerty); Application Administrator (Alex Wilber, azerty)"
+    },
+    {
+        "Control ID": "AAD-03",
+        "Category": "Roles",
+        "Requirement": "Pas de cumul de privilèges",
+        "Result": "Fail",
+        "Criticality": "Medium",
+        "Affected": 2,
+        "Details": "2 utilisateur(s) multi-rôles : test (Global Administrator, License Administrator); azerty (Security Administrator, Application Administrator)"
+    }
+]
