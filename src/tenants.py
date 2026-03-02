@@ -6,7 +6,7 @@ def get_all_tenants():
     return [
         {
             "id": AZ_TENANT_ID, 
-            "name": "Tenant_Production"
+            "name": "Tenant_01"
         },
        
        

@@ -1,6 +1,7 @@
 {
     "roles_audit": {
-        "max_global_admins": 3,
+        "min_global_admins": 2,
+        "max_global_admins": 8,
         "critical_roles": [
             "Global Administrator",
             "Privileged Role Administrator",

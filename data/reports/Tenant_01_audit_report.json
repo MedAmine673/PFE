@@ -2,11 +2,11 @@
     {
         "Control ID": "AAD-01",
         "Category": "Roles",
-        "Requirement": "Nombre de GA entre 2 et 8",
+        "Requirement": "Nombre de Global Admin entre 2 et 8",
         "Result": "Pass",
         "Criticality": "High",
         "Affected": 5,
-        "Details": "5 administrateur(s) global(aux) trouvé(s) :\nMohamed Amine BEN OUHIBA, Lee Gu, test, Adele Vance, Henrietta Mueller"
+        "Details": "5 GA trouvé(s) :\nMohamed Amine BEN OUHIBA, Lee Gu, test, Adele Vance, Henrietta Mueller"
     },
     {
         "Control ID": "AAD-02",

@@ -5343,6 +5343,8 @@
                     "userPrincipalName": "MedAmine@335lzf.onmicrosoft.com",
                     "externalUserConvertedOn": null,
                     "userType": "Member",
+                    "identityParentId": null,
+                    "agentIdentityBlueprintId": null,
                     "employeeOrgData": null,
                     "passwordProfile": null,
                     "assignedLicenses": [
@@ -5986,6 +5988,8 @@
                     "userPrincipalName": "LeeG@335lzf.onmicrosoft.com",
                     "externalUserConvertedOn": null,
                     "userType": "Member",
+                    "identityParentId": null,
+                    "agentIdentityBlueprintId": null,
                     "employeeOrgData": null,
                     "passwordProfile": null,
                     "assignedLicenses": [
@@ -6627,6 +6631,8 @@
                     "userPrincipalName": "test@335lzf.onmicrosoft.com",
                     "externalUserConvertedOn": null,
                     "userType": "Member",
+                    "identityParentId": null,
+                    "agentIdentityBlueprintId": null,
                     "employeeOrgData": null,
                     "passwordProfile": null,
                     "assignedLicenses": [
@@ -7277,6 +7283,8 @@
                     "userPrincipalName": "test@335lzf.onmicrosoft.com",
                     "externalUserConvertedOn": null,
                     "userType": "Member",
+                    "identityParentId": null,
+                    "agentIdentityBlueprintId": null,
                     "employeeOrgData": null,
                     "passwordProfile": null,
                     "assignedLicenses": [
@@ -7923,6 +7931,8 @@
                     "userPrincipalName": "azerty@335lzf.onmicrosoft.com",
                     "externalUserConvertedOn": null,
                     "userType": "Member",
+                    "identityParentId": null,
+                    "agentIdentityBlueprintId": null,
                     "employeeOrgData": null,
                     "assignedLicenses": [],
                     "assignedPlans": [],
@@ -8034,6 +8044,8 @@
                     "userPrincipalName": "AlexW@335lzf.onmicrosoft.com",
                     "externalUserConvertedOn": null,
                     "userType": "Member",
+                    "identityParentId": null,
+                    "agentIdentityBlueprintId": null,
                     "employeeOrgData": null,
                     "passwordProfile": null,
                     "assignedLicenses": [
@@ -8671,6 +8683,8 @@
                     "userPrincipalName": "azerty@335lzf.onmicrosoft.com",
                     "externalUserConvertedOn": null,
                     "userType": "Member",
+                    "identityParentId": null,
+                    "agentIdentityBlueprintId": null,
                     "employeeOrgData": null,
                     "assignedLicenses": [],
                     "assignedPlans": [],

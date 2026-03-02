@@ -14,7 +14,10 @@ def audit_roles(raw_data, baseline):
     role_defs = raw_data.get("role_definitions", [])
     critical_roles = config.get("critical_roles", [])
 
-    # SECTION 1 : NOMBRE DE GA (AAD-01)
+    name_to_id = {rd.get("displayName"): rd.get("id") for rd in role_defs if rd.get("displayName") and rd.get("id")}
+    ga_role_id = name_to_id.get("Global Administrator")
+
+    # SECTION 1 : NOMBRE DE GA (AAD-01) min=2, max=8
     ga_active_names = []
     for r in [role for role in active if role.get("displayName") == "Global Administrator"]:
         ga_active_names.extend(
@@ -27,16 +30,30 @@ def audit_roles(raw_data, baseline):
         name = principal.get("displayName") or principal.get("userPrincipalName") or e.get("principalId", "ID Inconnu")
         ga_eligible_names.append(name)
 
-    total_ga_count = len(ga_active_names) + len(ga_eligible_names)
-    max_ga = config.get("max_global_admins", 3)
-    is_ga_ok = check_threshold(total_ga_count, max_ga)
+    all_ga_names = []
+    for n in (ga_active_names + ga_eligible_names):
+        if n not in all_ga_names:
+            all_ga_names.append(n)
 
-    details_ga = f"Total : {total_ga_count} GA.\n"
-    details_ga += f"- Permanents ({len(ga_active_names)}) : {', '.join(ga_active_names) if ga_active_names else 'Aucun'}\n"
-    details_ga += f"- Éligibles PIM ({len(ga_eligible_names)}) : {', '.join(ga_eligible_names) if ga_eligible_names else 'Aucun'}"
+    total_ga_count = len(all_ga_names)
+
+    min_ga = config.get("min_global_admins", 2)
+    max_ga = config.get("max_global_admins", 8)
+
+    is_ga_ok = is_within_range(total_ga_count, min_ga, max_ga)
+
+    details_ga = f"{total_ga_count} GA trouvé(s) :\n"
+    details_ga += ", ".join(all_ga_names) if all_ga_names else "Aucun"
 
     audit_results.append(
-        create_finding("AAD-01", "Roles", f"Nombre de GA total <= {max_ga}", is_ga_ok, int(total_ga_count), details_ga)
+        create_finding(
+            "AAD-01",
+            "Roles",
+            f"Nombre de Global Admin entre {min_ga} et {max_ga}",
+            is_ga_ok,
+            int(total_ga_count),
+            details_ga
+        )
     )
 
     # SECTION 2 : CUMUL ET RÔLES CRITIQUES (AAD-02 & AAD-03)
@@ -76,11 +93,7 @@ def audit_roles(raw_data, baseline):
             "Conforme" if not violations_pim else f"Permanents détectés : {'; '.join(violations_pim)}",
         )
     )
-
     # SECTION 3 : POLITIQUES PIM (AAD-04, AAD-05, AAD-06)
-    name_to_id = {rd.get("displayName"): rd.get("id") for rd in role_defs if rd.get("displayName") and rd.get("id")}
-    ga_role_id = name_to_id.get("Global Administrator")
-
     def get_rules_for_role(role_def_id: str):
         a = next((x for x in assignments if x.get("roleDefinitionId") == role_def_id), None)
         if not a:
@@ -184,9 +197,7 @@ def audit_roles(raw_data, baseline):
         )
     )
 
-    # ==========================================================
     # AAD-06 : Durée d'activation <= 8h (tous les rôles critiques)
-    # ==========================================================
     non_compliant_duration = []
     missing_data_duration = []
 
