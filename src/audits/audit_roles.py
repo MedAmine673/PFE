@@ -14,11 +14,7 @@ def audit_roles(raw_data, baseline):
     role_defs = raw_data.get("role_definitions", [])
     critical_roles = config.get("critical_roles", [])
 
-    GA_ROLE_ID = "62e90394-69f5-4237-9190-012177145e10"
-
-    # ==========================================================
     # SECTION 1 : NOMBRE DE GA (AAD-01)
-    # ==========================================================
     ga_active_names = []
     for r in [role for role in active if role.get("displayName") == "Global Administrator"]:
         ga_active_names.extend(
@@ -26,7 +22,7 @@ def audit_roles(raw_data, baseline):
         )
 
     ga_eligible_names = []
-    for e in [item for item in eligible if item.get("roleDefinitionId") == GA_ROLE_ID]:
+    for e in [item for item in eligible if ga_role_id and item.get("roleDefinitionId") == ga_role_id]:
         principal = e.get("principal", {})
         name = principal.get("displayName") or principal.get("userPrincipalName") or e.get("principalId", "ID Inconnu")
         ga_eligible_names.append(name)
@@ -43,9 +39,7 @@ def audit_roles(raw_data, baseline):
         create_finding("AAD-01", "Roles", f"Nombre de GA total <= {max_ga}", is_ga_ok, int(total_ga_count), details_ga)
     )
 
-    # ==========================================================
     # SECTION 2 : CUMUL ET RÔLES CRITIQUES (AAD-02 & AAD-03)
-    # ==========================================================
     user_roles_map = {}
     for role in active:
         r_name = role.get("displayName", "Inconnu")
@@ -83,12 +77,9 @@ def audit_roles(raw_data, baseline):
         )
     )
 
-    # ==========================================================
     # SECTION 3 : POLITIQUES PIM (AAD-04, AAD-05, AAD-06)
-    # ==========================================================
-
-    # mapping displayName -> roleDefinitionId
     name_to_id = {rd.get("displayName"): rd.get("id") for rd in role_defs if rd.get("displayName") and rd.get("id")}
+    ga_role_id = name_to_id.get("Global Administrator")
 
     def get_rules_for_role(role_def_id: str):
         a = next((x for x in assignments if x.get("roleDefinitionId") == role_def_id), None)
@@ -110,10 +101,8 @@ def audit_roles(raw_data, baseline):
             None,
         )
 
-    # ==========================================================
     # AAD-04 : APPROBATION (seulement GA)
-    # ==========================================================
-    ga_policy_id, ga_rules, ga_status = get_rules_for_role(GA_ROLE_ID)
+    ga_policy_id, ga_rules, ga_status = get_rules_for_role(ga_role_id) if ga_role_id else (None, [], "no_role_definition")
 
     approval_rule = find_rule(
         ga_rules,
@@ -143,9 +132,7 @@ def audit_roles(raw_data, baseline):
         )
     )
 
-    # ==========================================================
     # AAD-05 : MFA requis (tous les rôles critiques)
-    # ==========================================================
     non_compliant_mfa = []
     missing_data_mfa = []
 

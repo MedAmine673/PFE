@@ -55,17 +55,6 @@ def fetch_raw_roles(token):
             print("DEBUG policies status:", resp.status_code)
             print("DEBUG policies body:", resp.text)
 
-        # Fallback si besoin (tu peux le garder)
-        if not results["pim_policies"]:
-            url_fallback = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleManagementPolicies?$expand=rules"
-            resp_fb = requests.get(url_fallback, headers=headers)
-            if resp_fb.status_code == 200:
-                results["pim_policies"] = resp_fb.json().get("value", [])
-                print("DEBUG: Récupération via fallback réussie.")
-            else:
-                print("DEBUG fallback policies status:", resp_fb.status_code)
-                print("DEBUG fallback policies body:", resp_fb.text)
-
         # 5) Assignments (lien entre roleDefinitionId et policyId)
         url_assign = (
             "https://graph.microsoft.com/v1.0/policies/roleManagementPolicyAssignments"
