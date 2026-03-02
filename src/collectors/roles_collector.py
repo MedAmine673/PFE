@@ -51,7 +51,6 @@ def fetch_raw_roles(token):
         resp = requests.get(url_policies, headers=headers)
         if resp.status_code == 200:
             results["pim_policies"] = resp.json().get("value", [])
-            print(f"DEBUG: {len(results['pim_policies'])} politiques récupérées.")
         else:
             print("DEBUG policies status:", resp.status_code)
             print("DEBUG policies body:", resp.text)
@@ -75,7 +74,6 @@ def fetch_raw_roles(token):
         resp_a = requests.get(url_assign, headers=headers)
         if resp_a.status_code == 200:
             results["policy_assignments"] = resp_a.json().get("value", [])
-            print(f"DEBUG: {len(results['policy_assignments'])} assignments récupérés.")
         else:
             print("DEBUG assignments status:", resp_a.status_code)
             print("DEBUG assignments body:", resp_a.text)

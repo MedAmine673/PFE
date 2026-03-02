@@ -2,7 +2,6 @@ import json
 import os
 
 def save_json(path, filename, data):
-    # Crée le dossier (data/raw ou data/normalized) s'il n'existe pas
     os.makedirs(path, exist_ok=True)
     
     full_path = os.path.join(path, f"{filename}.json")

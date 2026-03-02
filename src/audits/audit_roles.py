@@ -115,9 +115,6 @@ def audit_roles(raw_data, baseline):
     # ==========================================================
     ga_policy_id, ga_rules, ga_status = get_rules_for_role(GA_ROLE_ID)
 
-    print("DEBUG ga_policy_id:", ga_policy_id)
-    print("DEBUG ga_rules count:", len(ga_rules), "status:", ga_status)
-
     approval_rule = find_rule(
         ga_rules,
         "Approval",

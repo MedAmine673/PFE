@@ -1,0 +1,23 @@
+
+# Environnement virtuel
+venv/
+
+# Cache Python
+__pycache__/
+*.pyc
+
+# Fichiers d'environnement
+.env
+
+# Fichiers temporaires
+*.log
+*.tmp
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db

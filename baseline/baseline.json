@@ -7,10 +7,8 @@
             "Security Administrator",
             "Application Administrator",
             "Cloud Application Administrator"
-        ],
-        "forbidden_roles": [
-            "Helpdesk Administrator"
         ]
+       
     },
     "mfa_audit": {
         "require_mfa_for_admins": true,
