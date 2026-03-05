@@ -1,56 +1,77 @@
-[
-    {
-        "Control ID": "AAD-01",
-        "Category": "Roles",
-        "Requirement": "Nombre de Global Admin entre 2 et 8",
-        "Result": "Pass",
-        "Criticality": "High",
-        "Affected": 5,
-        "Details": "5 GA trouvé(s) :\nMohamed Amine BEN OUHIBA, Lee Gu, test, Adele Vance, Henrietta Mueller"
+{
+    "tenant": "Tenant_01",
+    "summary": {
+        "risk_score": 16,
+        "risk_level": "Élevé",
+        "failed_controls": 4,
+        "total_controls": 6
     },
-    {
-        "Control ID": "AAD-02",
-        "Category": "Roles",
-        "Requirement": "Pas de cumul de privilèges",
-        "Result": "Fail",
-        "Criticality": "Critical",
-        "Affected": 2,
-        "Details": "Cumuls détectés : test (Global Administrator, License Administrator); azerty (Security Administrator, Application Administrator)"
-    },
-    {
-        "Control ID": "AAD-03",
-        "Category": "PIM",
-        "Requirement": "Rôles critiques via PIM uniquement",
-        "Result": "Fail",
-        "Criticality": "Medium",
-        "Affected": 3,
-        "Details": "Permanents détectés : Global Administrator (Mohamed Amine BEN OUHIBA, Lee Gu, test); Security Administrator (azerty); Application Administrator (Alex Wilber, azerty)"
-    },
-    {
-        "Control ID": "AAD-04",
-        "Category": "PIM",
-        "Requirement": "Activation GA nécessite approbation",
-        "Result": "Pass",
-        "Criticality": "High",
-        "Affected": 0,
-        "Details": "Configuré"
-    },
-    {
-        "Control ID": "AAD-05",
-        "Category": "PIM",
-        "Requirement": "MFA requis pour activation PIM (rôles critiques)",
-        "Result": "Fail",
-        "Criticality": "Low",
-        "Affected": 1,
-        "Details": "MFA non exigé pour : Application Administrator"
-    },
-    {
-        "Control ID": "AAD-06",
-        "Category": "PIM",
-        "Requirement": "Durée d'activation <= 8h (rôles critiques)",
-        "Result": "Pass",
-        "Criticality": "Low",
-        "Affected": 0,
-        "Details": "Conforme"
-    }
-]
+    "findings": [
+        {
+            "Control ID": "AAD-01",
+            "Category": "Roles",
+            "Requirement": "Nombre de Global Admin entre 2 et 8",
+            "Result": "Pass",
+            "Passed": true,
+            "Criticality": "High",
+            "Risk Points": 0,
+            "Affected": 5,
+            "Details": "5 GA trouvé(s) :\nMohamed Amine BEN OUHIBA, Lee Gu, test, Adele Vance, Henrietta Mueller"
+        },
+        {
+            "Control ID": "AAD-02",
+            "Category": "Roles",
+            "Requirement": "Pas de cumul de privilèges",
+            "Result": "Fail",
+            "Passed": false,
+            "Criticality": "Critical",
+            "Risk Points": 10,
+            "Affected": 2,
+            "Details": "Cumuls détectés : test (Global Administrator, License Administrator); azerty (Security Administrator, Application Administrator)"
+        },
+        {
+            "Control ID": "AAD-03",
+            "Category": "PIM",
+            "Requirement": "Rôles critiques via PIM uniquement",
+            "Result": "Fail",
+            "Passed": false,
+            "Criticality": "Medium",
+            "Risk Points": 4,
+            "Affected": 3,
+            "Details": "Permanents détectés : Global Administrator (Mohamed Amine BEN OUHIBA, Lee Gu, test); Security Administrator (azerty); Application Administrator (Alex Wilber, azerty)"
+        },
+        {
+            "Control ID": "AAD-04",
+            "Category": "PIM",
+            "Requirement": "Activation GA nécessite approbation",
+            "Result": "Pass",
+            "Passed": true,
+            "Criticality": "High",
+            "Risk Points": 0,
+            "Affected": 0,
+            "Details": "Configuré"
+        },
+        {
+            "Control ID": "AAD-05",
+            "Category": "PIM",
+            "Requirement": "MFA requis pour activation PIM (rôles critiques)",
+            "Result": "Fail",
+            "Passed": false,
+            "Criticality": "Low",
+            "Risk Points": 1,
+            "Affected": 1,
+            "Details": "MFA non exigé pour : Application Administrator"
+        },
+        {
+            "Control ID": "AAD-06",
+            "Category": "PIM",
+            "Requirement": "Durée d'activation <= 8h (rôles critiques)",
+            "Result": "Fail",
+            "Passed": false,
+            "Criticality": "Low",
+            "Risk Points": 1,
+            "Affected": 1,
+            "Details": "Durée non conforme : Security Administrator (11.0h)"
+        }
+    ]
+}

@@ -93,6 +93,7 @@ def audit_roles(raw_data, baseline):
             "Conforme" if not violations_pim else f"Permanents détectés : {'; '.join(violations_pim)}",
         )
     )
+
     # SECTION 3 : POLITIQUES PIM (AAD-04, AAD-05, AAD-06)
     def get_rules_for_role(role_def_id: str):
         a = next((x for x in assignments if x.get("roleDefinitionId") == role_def_id), None)
@@ -254,5 +255,5 @@ def audit_roles(raw_data, baseline):
             details_dur,
         )
     )
-
+   
     return audit_results

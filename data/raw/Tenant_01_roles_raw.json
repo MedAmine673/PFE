@@ -29,6 +29,7 @@
                         "microsoft.directory/administrativeUnits/allProperties/allTasks",
                         "microsoft.directory/appConsent/appConsentRequests/allProperties/read",
                         "microsoft.directory/applications/allProperties/allTasks",
+                        "microsoft.directory/applications/disablement/update",
                         "microsoft.directory/applications/synchronization/standard/read",
                         "microsoft.directory/applicationTemplates/instantiate",
                         "microsoft.directory/auditLogs/allProperties/read",
@@ -695,6 +696,7 @@
                         "microsoft.directory/applications/basic/update",
                         "microsoft.directory/applications/credentials/update",
                         "microsoft.directory/applications/delete",
+                        "microsoft.directory/applications/disablement/update",
                         "microsoft.directory/applications/extensionProperties/update",
                         "microsoft.directory/applications/notes/update",
                         "microsoft.directory/applications/owners/update",
@@ -1377,6 +1379,7 @@
                         "microsoft.directory/applications/create",
                         "microsoft.directory/applications/credentials/update",
                         "microsoft.directory/applications/delete",
+                        "microsoft.directory/applications/disablement/update",
                         "microsoft.directory/applications/extensionProperties/update",
                         "microsoft.directory/applications/notes/update",
                         "microsoft.directory/applications/owners/update",
@@ -1779,6 +1782,7 @@
                         "microsoft.directory/applications/create",
                         "microsoft.directory/applications/credentials/update",
                         "microsoft.directory/applications/delete",
+                        "microsoft.directory/applications/disablement/update",
                         "microsoft.directory/applications/extensionProperties/update",
                         "microsoft.directory/applications/notes/update",
                         "microsoft.directory/applications/owners/update",
@@ -14841,7 +14845,7 @@
             "isOrganizationDefault": false,
             "scopeId": "/",
             "scopeType": "Directory",
-            "lastModifiedDateTime": "2026-03-01T21:05:09.797Z",
+            "lastModifiedDateTime": "2026-03-03T09:15:21.88Z",
             "lastModifiedBy": {
                 "displayName": "Mohamed Amine BEN OUHIBA",
                 "id": null
@@ -15020,7 +15024,7 @@
                     "@odata.type": "#microsoft.graph.unifiedRoleManagementPolicyExpirationRule",
                     "id": "Expiration_EndUser_Assignment",
                     "isExpirationRequired": false,
-                    "maximumDuration": "PT6H30M",
+                    "maximumDuration": "PT11H",
                     "target": {
                         "caller": "EndUser",
                         "operations": [
@@ -15098,7 +15102,7 @@
                     "notificationType": "Email",
                     "recipientType": "Admin",
                     "notificationLevel": "All",
-                    "isDefaultRecipientsEnabled": true,
+                    "isDefaultRecipientsEnabled": false,
                     "notificationRecipients": [],
                     "target": {
                         "caller": "EndUser",
@@ -16410,9 +16414,9 @@
             "isOrganizationDefault": false,
             "scopeId": "/",
             "scopeType": "Directory",
-            "lastModifiedDateTime": null,
+            "lastModifiedDateTime": "2026-03-02T10:20:05.84Z",
             "lastModifiedBy": {
-                "displayName": null,
+                "displayName": "Mohamed Amine BEN OUHIBA",
                 "id": null
             },
             "rules@odata.context": "https://graph.microsoft.com/v1.0/$metadata#policies/roleManagementPolicies('Directory_c47235d5-0241-46ae-94d2-a1b6c5dc9c6b_3af06f11-52ef-43db-b1f8-c84f69018302')/rules",
@@ -16422,20 +16426,6 @@
                     "id": "Expiration_Admin_Eligibility",
                     "isExpirationRequired": false,
                     "maximumDuration": "P365D",
-                    "target": {
-                        "caller": "Admin",
-                        "operations": [
-                            "all"
-                        ],
-                        "level": "Eligibility",
-                        "inheritableSettings": [],
-                        "enforcedSettings": []
-                    }
-                },
-                {
-                    "@odata.type": "#microsoft.graph.unifiedRoleManagementPolicyEnablementRule",
-                    "id": "Enablement_Admin_Eligibility",
-                    "enabledRules": [],
                     "target": {
                         "caller": "Admin",
                         "operations": [
@@ -16490,6 +16480,20 @@
                     "notificationLevel": "All",
                     "isDefaultRecipientsEnabled": true,
                     "notificationRecipients": [],
+                    "target": {
+                        "caller": "Admin",
+                        "operations": [
+                            "all"
+                        ],
+                        "level": "Eligibility",
+                        "inheritableSettings": [],
+                        "enforcedSettings": []
+                    }
+                },
+                {
+                    "@odata.type": "#microsoft.graph.unifiedRoleManagementPolicyEnablementRule",
+                    "id": "Enablement_Admin_Eligibility",
+                    "enabledRules": [],
                     "target": {
                         "caller": "Admin",
                         "operations": [
@@ -16588,7 +16592,7 @@
                 {
                     "@odata.type": "#microsoft.graph.unifiedRoleManagementPolicyExpirationRule",
                     "id": "Expiration_EndUser_Assignment",
-                    "isExpirationRequired": true,
+                    "isExpirationRequired": false,
                     "maximumDuration": "PT8H",
                     "target": {
                         "caller": "EndUser",
@@ -16650,7 +16654,7 @@
                     "@odata.type": "#microsoft.graph.unifiedRoleManagementPolicyAuthenticationContextRule",
                     "id": "AuthenticationContext_EndUser_Assignment",
                     "isEnabled": false,
-                    "claimValue": null,
+                    "claimValue": "",
                     "target": {
                         "caller": "EndUser",
                         "operations": [
@@ -16667,7 +16671,7 @@
                     "notificationType": "Email",
                     "recipientType": "Admin",
                     "notificationLevel": "All",
-                    "isDefaultRecipientsEnabled": true,
+                    "isDefaultRecipientsEnabled": false,
                     "notificationRecipients": [],
                     "target": {
                         "caller": "EndUser",
@@ -16685,7 +16689,7 @@
                     "notificationType": "Email",
                     "recipientType": "Requestor",
                     "notificationLevel": "All",
-                    "isDefaultRecipientsEnabled": true,
+                    "isDefaultRecipientsEnabled": false,
                     "notificationRecipients": [],
                     "target": {
                         "caller": "EndUser",
@@ -16703,7 +16707,7 @@
                     "notificationType": "Email",
                     "recipientType": "Approver",
                     "notificationLevel": "All",
-                    "isDefaultRecipientsEnabled": true,
+                    "isDefaultRecipientsEnabled": false,
                     "notificationRecipients": [],
                     "target": {
                         "caller": "EndUser",
