@@ -165,7 +165,7 @@ def audit_roles(raw_data, baseline):
             role_rules,
             "Enablement",
             ["Enablement_EndUser_Assignment", "Enablement_EndUser_Activation"],
-        )
+        ) 
 
         has_mfa = False
         if mfa_rule:
