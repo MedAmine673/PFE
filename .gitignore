@@ -21,3 +21,5 @@ __pycache__/
 
 # Windows
 Thumbs.db
+
+.env
