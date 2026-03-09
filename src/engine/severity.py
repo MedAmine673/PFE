@@ -11,6 +11,8 @@ def get_severity(control_id):
         "AAD-04": "High",      # Approbation GA
         "AAD-05": "Low",       # MFA activation PIM
         "AAD-06": "Low",       # Durée activation
+        "AAD-07": "High",    # Admin sans MFA
+        "AAD-08": "Medium",  # Absence de CA admin
     }
     return severities.get(control_id, "Low")
 

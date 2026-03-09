@@ -12,9 +12,9 @@
        
     },
     "mfa_audit": {
-        "require_mfa_for_admins": true,
-        "allowed_mfa_methods": ["auth_app", "fido2", "hello"],
-        "check_conditional_access": true
+    "require_mfa_for_admins": true,
+    "allowed_mfa_methods": [],
+    "check_conditional_access": true
     },
     "activity_audit": {
         "max_inactivity_days": 90,

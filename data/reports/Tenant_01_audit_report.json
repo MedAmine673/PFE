@@ -1,10 +1,10 @@
 {
     "tenant": "Tenant_01",
     "summary": {
-        "risk_score": 16,
-        "risk_level": "Élevé",
-        "failed_controls": 4,
-        "total_controls": 6
+        "risk_score": 23,
+        "risk_level": "Critique",
+        "failed_controls": 5,
+        "total_controls": 8
     },
     "findings": [
         {
@@ -72,6 +72,28 @@
             "Risk Points": 1,
             "Affected": 1,
             "Details": "Durée non conforme : Security Administrator (11.0h)"
+        },
+        {
+            "Control ID": "AAD-07",
+            "Category": "MFA",
+            "Requirement": "Chaque administrateur est protégé par MFA",
+            "Result": "Fail",
+            "Passed": false,
+            "Criticality": "High",
+            "Risk Points": 7,
+            "Affected": 5,
+            "Details": "Administrateurs sans MFA : Lee Gu (LeeG@335lzf.onmicrosoft.com), azerty (azerty@335lzf.onmicrosoft.com), Alex Wilber (AlexW@335lzf.onmicrosoft.com), Adele Vance (AdeleV@335lzf.onmicrosoft.com), Henrietta Mueller (HenriettaM@335lzf.onmicrosoft.com)"
+        },
+        {
+            "Control ID": "AAD-08",
+            "Category": "Conditional Access",
+            "Requirement": "Une politique Conditional Access dédiée aux administrateurs existe",
+            "Result": "Pass",
+            "Passed": true,
+            "Criticality": "Medium",
+            "Risk Points": 0,
+            "Affected": 0,
+            "Details": "Conforme"
         }
     ]
 }

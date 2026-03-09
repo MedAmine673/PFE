@@ -1,0 +1,616 @@
+{
+    "user_registration_details": [
+        {
+            "id": "cb03245a-940d-4d1e-95b5-0181cff67301",
+            "userPrincipalName": "AdeleV@335lzf.onmicrosoft.com",
+            "userDisplayName": "Adele Vance",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2809408Z"
+        },
+        {
+            "id": "90f22c36-284e-47c7-a5a2-c3ccc686a793",
+            "userPrincipalName": "AlexW@335lzf.onmicrosoft.com",
+            "userDisplayName": "Alex Wilber",
+            "userType": "member",
+            "isAdmin": true,
+            "isSsprRegistered": false,
+            "isSsprEnabled": true,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2820752Z"
+        },
+        {
+            "id": "6e85fcf4-ced8-44e3-8e6d-20ae1e94a093",
+            "userPrincipalName": "DiegoS@335lzf.onmicrosoft.com",
+            "userDisplayName": "Diego Siciliani",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2810176Z"
+        },
+        {
+            "id": "1ad556cd-3c20-4940-a34f-d5a805e65ef5",
+            "userPrincipalName": "GradyA@335lzf.onmicrosoft.com",
+            "userDisplayName": "Grady Archie",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2817942Z"
+        },
+        {
+            "id": "01f3b7fc-c203-44e5-a83a-73c6112e4e83",
+            "userPrincipalName": "HenriettaM@335lzf.onmicrosoft.com",
+            "userDisplayName": "Henrietta Mueller",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.282518Z"
+        },
+        {
+            "id": "f3eb0d4b-63a1-48cc-9f55-143dc9851af4",
+            "userPrincipalName": "IsaiahL@335lzf.onmicrosoft.com",
+            "userDisplayName": "Isaiah Langer",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2825664Z"
+        },
+        {
+            "id": "ef752c32-88e1-4ef7-ad28-bd4b7800da40",
+            "userPrincipalName": "JohannaL@335lzf.onmicrosoft.com",
+            "userDisplayName": "Johanna Lorenz",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2809402Z"
+        },
+        {
+            "id": "d2926ef8-145b-48dd-9c36-0bba532398c1",
+            "userPrincipalName": "JoniS@335lzf.onmicrosoft.com",
+            "userDisplayName": "Joni Sherman",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.280942Z"
+        },
+        {
+            "id": "9b1dac0a-ef79-4378-a279-ed7176a7085a",
+            "userPrincipalName": "LeeG@335lzf.onmicrosoft.com",
+            "userDisplayName": "Lee Gu",
+            "userType": "member",
+            "isAdmin": true,
+            "isSsprRegistered": false,
+            "isSsprEnabled": true,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2809402Z"
+        },
+        {
+            "id": "e7ea8f60-e6f6-4f51-9363-7fe782324ae6",
+            "userPrincipalName": "LidiaH@335lzf.onmicrosoft.com",
+            "userDisplayName": "Lidia Holloway",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2825584Z"
+        },
+        {
+            "id": "11e8be6e-ba7f-440f-b870-31e495fe987a",
+            "userPrincipalName": "LynneR@335lzf.onmicrosoft.com",
+            "userDisplayName": "Lynne Robbins",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2817485Z"
+        },
+        {
+            "id": "a7c30583-ae72-4d3d-9ba6-f047a48a3c2f",
+            "userPrincipalName": "MeganB@335lzf.onmicrosoft.com",
+            "userDisplayName": "Megan Bowen",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.283118Z"
+        },
+        {
+            "id": "f9739d87-0d28-4656-9129-38f9aa6baf15",
+            "userPrincipalName": "MiriamG@335lzf.onmicrosoft.com",
+            "userDisplayName": "Miriam Graham",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2827218Z"
+        },
+        {
+            "id": "04a75dd8-508e-43f5-85c4-9e07db469c8a",
+            "userPrincipalName": "MedAmine@335lzf.onmicrosoft.com",
+            "userDisplayName": "Mohamed Amine BEN OUHIBA",
+            "userType": "member",
+            "isAdmin": true,
+            "isSsprRegistered": true,
+            "isSsprEnabled": true,
+            "isSsprCapable": true,
+            "isMfaRegistered": true,
+            "isMfaCapable": true,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [
+                "microsoftAuthenticatorPush",
+                "softwareOneTimePasscode"
+            ],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [
+                "PhoneAppNotification"
+            ],
+            "userPreferredMethodForSecondaryAuthentication": "push",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2819786Z"
+        },
+        {
+            "id": "6fe1bb60-a882-4761-9ce4-4a208afe2a05",
+            "userPrincipalName": "NestorW@335lzf.onmicrosoft.com",
+            "userDisplayName": "Nestor Wilke",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2813409Z"
+        },
+        {
+            "id": "6a610e4b-2835-4b7c-a53d-05344c79afdb",
+            "userPrincipalName": "PattiF@335lzf.onmicrosoft.com",
+            "userDisplayName": "Patti Fernandez",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2825088Z"
+        },
+        {
+            "id": "b4507ff6-cbf0-471a-a999-370999e599d6",
+            "userPrincipalName": "PradeepG@335lzf.onmicrosoft.com",
+            "userDisplayName": "Pradeep Gupta",
+            "userType": "member",
+            "isAdmin": false,
+            "isSsprRegistered": false,
+            "isSsprEnabled": false,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2817484Z"
+        },
+        {
+            "id": "5f1ee857-d5dc-4286-9e77-9e52a460debb",
+            "userPrincipalName": "azerty@335lzf.onmicrosoft.com",
+            "userDisplayName": "azerty",
+            "userType": "member",
+            "isAdmin": true,
+            "isSsprRegistered": false,
+            "isSsprEnabled": true,
+            "isSsprCapable": false,
+            "isMfaRegistered": false,
+            "isMfaCapable": false,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [],
+            "userPreferredMethodForSecondaryAuthentication": "none",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2817968Z"
+        },
+        {
+            "id": "005e05ee-c776-4f42-89bb-baa73672f4e6",
+            "userPrincipalName": "test@335lzf.onmicrosoft.com",
+            "userDisplayName": "test",
+            "userType": "member",
+            "isAdmin": true,
+            "isSsprRegistered": true,
+            "isSsprEnabled": true,
+            "isSsprCapable": true,
+            "isMfaRegistered": true,
+            "isMfaCapable": true,
+            "isPasswordlessCapable": false,
+            "methodsRegistered": [
+                "softwareOneTimePasscode"
+            ],
+            "isSystemPreferredAuthenticationMethodEnabled": true,
+            "systemPreferredAuthenticationMethods": [
+                "SoftwareOTP"
+            ],
+            "userPreferredMethodForSecondaryAuthentication": "oath",
+            "lastUpdatedDateTime": "2026-03-09T03:50:36.2908376Z"
+        }
+    ],
+    "conditional_access_policies": [
+        {
+            "id": "18eec7a0-414a-4df2-9908-737a11127d9a",
+            "templateId": "b8bda7f8-6584-4446-bce9-d871480e53fa",
+            "displayName": "Securing security info registration",
+            "createdDateTime": "2026-02-16T08:43:50.3862365Z",
+            "modifiedDateTime": null,
+            "state": "enabledForReportingButNotEnforced",
+            "sessionControls": null,
+            "conditions": {
+                "userRiskLevels": [],
+                "signInRiskLevels": [],
+                "clientAppTypes": [
+                    "all"
+                ],
+                "servicePrincipalRiskLevels": [],
+                "insiderRiskLevels": null,
+                "platforms": null,
+                "devices": null,
+                "clientApplications": null,
+                "authenticationFlows": null,
+                "applications": {
+                    "includeApplications": [],
+                    "excludeApplications": [],
+                    "includeUserActions": [
+                        "urn:user:registersecurityinfo"
+                    ],
+                    "includeAuthenticationContextClassReferences": [],
+                    "applicationFilter": null
+                },
+                "users": {
+                    "includeUsers": [
+                        "All"
+                    ],
+                    "excludeUsers": [
+                        "GuestsOrExternalUsers",
+                        "04a75dd8-508e-43f5-85c4-9e07db469c8a"
+                    ],
+                    "includeGroups": [],
+                    "excludeGroups": [],
+                    "includeRoles": [],
+                    "excludeRoles": [
+                        "62e90394-69f5-4237-9190-012177145e10"
+                    ],
+                    "includeGuestsOrExternalUsers": null,
+                    "excludeGuestsOrExternalUsers": null
+                },
+                "locations": {
+                    "includeLocations": [
+                        "All"
+                    ],
+                    "excludeLocations": [
+                        "AllTrusted"
+                    ]
+                }
+            },
+            "grantControls": {
+                "operator": "OR",
+                "builtInControls": [
+                    "mfa"
+                ],
+                "customAuthenticationFactors": [],
+                "termsOfUse": [],
+                "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('18eec7a0-414a-4df2-9908-737a11127d9a')/grantControls/authenticationStrength/$entity",
+                "authenticationStrength": null
+            }
+        },
+        {
+            "id": "7dc0111e-ae02-43ce-a518-fcc87a7627aa",
+            "templateId": "4e39a309-931e-4cb1-a371-e2beea168002",
+            "displayName": "Block access for unknown or unsupported device platform",
+            "createdDateTime": "2026-02-16T11:35:03.1261304Z",
+            "modifiedDateTime": null,
+            "state": "enabledForReportingButNotEnforced",
+            "sessionControls": null,
+            "conditions": {
+                "userRiskLevels": [],
+                "signInRiskLevels": [],
+                "clientAppTypes": [
+                    "all"
+                ],
+                "servicePrincipalRiskLevels": [],
+                "insiderRiskLevels": null,
+                "locations": null,
+                "devices": null,
+                "clientApplications": null,
+                "authenticationFlows": null,
+                "applications": {
+                    "includeApplications": [
+                        "All"
+                    ],
+                    "excludeApplications": [],
+                    "includeUserActions": [],
+                    "includeAuthenticationContextClassReferences": [],
+                    "applicationFilter": null
+                },
+                "users": {
+                    "includeUsers": [
+                        "All"
+                    ],
+                    "excludeUsers": [
+                        "04a75dd8-508e-43f5-85c4-9e07db469c8a"
+                    ],
+                    "includeGroups": [],
+                    "excludeGroups": [],
+                    "includeRoles": [],
+                    "excludeRoles": [],
+                    "includeGuestsOrExternalUsers": null,
+                    "excludeGuestsOrExternalUsers": null
+                },
+                "platforms": {
+                    "includePlatforms": [
+                        "all"
+                    ],
+                    "excludePlatforms": [
+                        "android",
+                        "iOS",
+                        "windows",
+                        "macOS",
+                        "linux",
+                        "windowsPhone"
+                    ]
+                }
+            },
+            "grantControls": {
+                "operator": "OR",
+                "builtInControls": [
+                    "block"
+                ],
+                "customAuthenticationFactors": [],
+                "termsOfUse": [],
+                "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('7dc0111e-ae02-43ce-a518-fcc87a7627aa')/grantControls/authenticationStrength/$entity",
+                "authenticationStrength": null
+            }
+        },
+        {
+            "id": "eccd9940-ed51-47d0-a65f-3a293a1347d6",
+            "templateId": "a4072ac0-722b-4991-981b-7f9755daef14",
+            "displayName": "Require multifactor authentication for guest access",
+            "createdDateTime": "2026-02-16T17:32:10.1677347Z",
+            "modifiedDateTime": null,
+            "state": "enabledForReportingButNotEnforced",
+            "sessionControls": null,
+            "conditions": {
+                "userRiskLevels": [],
+                "signInRiskLevels": [],
+                "clientAppTypes": [
+                    "all"
+                ],
+                "servicePrincipalRiskLevels": [],
+                "insiderRiskLevels": null,
+                "platforms": null,
+                "locations": null,
+                "devices": null,
+                "clientApplications": null,
+                "authenticationFlows": null,
+                "applications": {
+                    "includeApplications": [
+                        "All"
+                    ],
+                    "excludeApplications": [],
+                    "includeUserActions": [],
+                    "includeAuthenticationContextClassReferences": [],
+                    "applicationFilter": null
+                },
+                "users": {
+                    "includeUsers": [
+                        "GuestsOrExternalUsers"
+                    ],
+                    "excludeUsers": [
+                        "04a75dd8-508e-43f5-85c4-9e07db469c8a"
+                    ],
+                    "includeGroups": [],
+                    "excludeGroups": [],
+                    "includeRoles": [],
+                    "excludeRoles": [],
+                    "includeGuestsOrExternalUsers": null,
+                    "excludeGuestsOrExternalUsers": null
+                }
+            },
+            "grantControls": {
+                "operator": "OR",
+                "builtInControls": [
+                    "mfa"
+                ],
+                "customAuthenticationFactors": [],
+                "termsOfUse": [],
+                "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('eccd9940-ed51-47d0-a65f-3a293a1347d6')/grantControls/authenticationStrength/$entity",
+                "authenticationStrength": null
+            }
+        },
+        {
+            "id": "7ed0d23b-b754-4ee6-93ff-e6910850973f",
+            "templateId": "c7503427-338e-4c5e-902d-abe252abfb43",
+            "displayName": "Require multifactor authentication for admins",
+            "createdDateTime": "2026-03-09T09:46:03.2540852Z",
+            "modifiedDateTime": null,
+            "state": "enabledForReportingButNotEnforced",
+            "sessionControls": null,
+            "conditions": {
+                "userRiskLevels": [],
+                "signInRiskLevels": [],
+                "clientAppTypes": [
+                    "all"
+                ],
+                "servicePrincipalRiskLevels": [],
+                "insiderRiskLevels": null,
+                "platforms": null,
+                "locations": null,
+                "devices": null,
+                "clientApplications": null,
+                "authenticationFlows": null,
+                "applications": {
+                    "includeApplications": [
+                        "All"
+                    ],
+                    "excludeApplications": [],
+                    "includeUserActions": [],
+                    "includeAuthenticationContextClassReferences": [],
+                    "applicationFilter": null
+                },
+                "users": {
+                    "includeUsers": [],
+                    "excludeUsers": [
+                        "04a75dd8-508e-43f5-85c4-9e07db469c8a"
+                    ],
+                    "includeGroups": [],
+                    "excludeGroups": [],
+                    "includeRoles": [
+                        "62e90394-69f5-4237-9190-012177145e10",
+                        "194ae4cb-b126-40b2-bd5b-6091b380977d",
+                        "f28a1f50-f6e7-4571-818b-6a12f2af6b6c",
+                        "29232cdf-9323-42fd-ade2-1d097af3e4de",
+                        "b1be1c3e-b65d-4f19-8427-f6fa0d97feb9",
+                        "729827e3-9c14-49f7-bb1b-9608f156bbb8",
+                        "b0f54661-2d74-4c50-afa3-1ec803f12efe",
+                        "fe930be7-5e62-47db-91af-98c3a49a38b1",
+                        "c4e39bd9-1100-46d3-8c65-fb160da0071f",
+                        "9b895d92-2cd3-44c7-9d02-a6ac2d5ea5c3",
+                        "158c047a-c907-4556-b7ef-446551a6b5f7",
+                        "966707d0-3269-4727-9be2-8c3a10f19b9d",
+                        "7be44c8a-adaf-4e2a-84d6-ab2649e08a13",
+                        "e8611ab8-c189-46e8-94e1-60213ab1f814"
+                    ],
+                    "excludeRoles": [],
+                    "includeGuestsOrExternalUsers": null,
+                    "excludeGuestsOrExternalUsers": null
+                }
+            },
+            "grantControls": {
+                "operator": "OR",
+                "builtInControls": [
+                    "mfa"
+                ],
+                "customAuthenticationFactors": [],
+                "termsOfUse": [],
+                "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('7ed0d23b-b754-4ee6-93ff-e6910850973f')/grantControls/authenticationStrength/$entity",
+                "authenticationStrength": null
+            }
+        }
+    ]
+}
