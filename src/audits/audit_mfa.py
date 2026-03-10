@@ -149,7 +149,7 @@ def audit_mfa(auth_data, roles_data, baseline):
     audit_results.append(
         create_finding(
             "AAD-08",
-            "Conditional Access",
+            "CA",
             "Une politique Conditional Access dédiée aux administrateurs existe",
             ca_policy_found,
             0 if ca_policy_found else 1,
