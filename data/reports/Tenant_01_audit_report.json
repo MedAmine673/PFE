@@ -1,10 +1,10 @@
 {
     "tenant": "Tenant_01",
     "summary": {
-        "risk_score": 23,
+        "risk_score": 24,
         "risk_level": "Critique",
-        "failed_controls": 5,
-        "total_controls": 8
+        "failed_controls": 6,
+        "total_controls": 10
     },
     "findings": [
         {
@@ -94,6 +94,28 @@
             "Risk Points": 0,
             "Affected": 0,
             "Details": "Conforme"
+        },
+        {
+            "Control ID": "AAD-09",
+            "Category": "Activity",
+            "Requirement": "Administrateur inactif depuis plus de 90 jours",
+            "Result": "Pass",
+            "Passed": true,
+            "Criticality": "Low",
+            "Risk Points": 0,
+            "Affected": 0,
+            "Details": "Conforme"
+        },
+        {
+            "Control ID": "AAD-10",
+            "Category": "Activity",
+            "Requirement": "Compte administrateur sans historique de connexion",
+            "Result": "Fail",
+            "Passed": false,
+            "Criticality": "Low",
+            "Risk Points": 1,
+            "Affected": 1,
+            "Details": "Comptes sans historique de connexion : azerty (azerty@335lzf.onmicrosoft.com)"
         }
     ]
 }

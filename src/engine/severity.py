@@ -1,5 +1,3 @@
-# src/engine/severity.py
-
 def get_severity(control_id):
     """
     Définit la criticité par défaut pour chaque ID de contrôle.

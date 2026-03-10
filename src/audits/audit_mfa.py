@@ -19,9 +19,7 @@ def audit_mfa(auth_data, roles_data, baseline):
 
     critical_roles = baseline.get("roles_audit", {}).get("critical_roles", [])
 
-    # ==========================================================
     # Préparation : liste des admins à partir des rôles critiques
-    # ==========================================================
     name_to_role_id = {
         rd.get("displayName"): rd.get("id")
         for rd in role_definitions
@@ -69,9 +67,7 @@ def audit_mfa(auth_data, roles_data, baseline):
         if upn:
             reg_by_upn[upn.lower()] = user
 
-    # ==========================================================
     # AAD-07 : Chaque administrateur est protégé par MFA
-    # ==========================================================
     admins_without_mfa = []
 
     if require_mfa_for_admins:
@@ -120,9 +116,7 @@ def audit_mfa(auth_data, roles_data, baseline):
         )
     )
 
-    # ==========================================================
     # AAD-08 : Existence d'une politique Conditional Access dédiée aux administrateurs
-    # ==========================================================
     ca_policy_found = False
 
     if check_conditional_access:

@@ -3,17 +3,51 @@ import pandas as pd
 import json
 import os
 
+from src.tenants import get_all_tenants
+from src.main import run_audit_workflow
+
 st.set_page_config(page_title="Dashboard Audit PFE", layout="wide")
 
-st.title(" Résultats de l'Audit Sécurité")
+st.title("Résultats de l'Audit Sécurité")
 
-report_file = "data/reports/Tenant_01_audit_report.json"
+if "audit_done" not in st.session_state:
+    st.session_state.audit_done = False
 
-if os.path.exists(report_file):
-    with open(report_file, "r") as f:
-        data = json.load(f)
+if "current_report" not in st.session_state:
+    st.session_state.current_report = None
 
-    # Compatibilité: ancien format (liste) vs nouveau format (dict avec summary/findings)
+tenants = get_all_tenants()
+
+if not tenants:
+    st.warning("Aucun tenant trouvé.")
+    st.stop()
+
+tenant_names = [t["name"] for t in tenants]
+
+selected_tenant_name = st.selectbox(
+    "Choisir un tenant à auditer",
+    tenant_names
+)
+
+selected_tenant = next((t for t in tenants if t["name"] == selected_tenant_name), None)
+
+if st.button("Lancer l'audit"):
+    if selected_tenant and selected_tenant.get("id"):
+        with st.spinner(f"Audit en cours pour {selected_tenant_name}..."):
+            report_data = run_audit_workflow(selected_tenant["id"], selected_tenant["name"])
+
+        if report_data:
+            st.session_state.audit_done = True
+            st.session_state.current_report = report_data
+            st.success(f"Audit terminé pour {selected_tenant_name}.")
+        else:
+            st.error("Erreur pendant l'audit.")
+    else:
+        st.error("Tenant invalide ou ID manquant.")
+
+if st.session_state.audit_done and st.session_state.current_report:
+    data = st.session_state.current_report
+
     if isinstance(data, list):
         findings = data
         summary = {}
@@ -23,13 +57,11 @@ if os.path.exists(report_file):
 
     df = pd.DataFrame(findings)
 
-    # Supprime la colonne Passed si elle existe
-    if "Passed" in df.columns:
+    if not df.empty and "Passed" in df.columns:
         df = df.drop(columns=["Passed"])
 
-    # Bloc classification du risque (au-dessus du tableau)
     if summary:
-        st.subheader("Classification du risque")
+        st.subheader(f"Classification du risque - {selected_tenant_name}")
 
         st.markdown(
             """
@@ -42,7 +74,6 @@ if os.path.exists(report_file):
                 font-size:28px;
                 font-weight:700;
             }
-
             .risk-badge {
                 padding:6px 14px;
                 border-radius:8px;
@@ -78,35 +109,34 @@ if os.path.exists(report_file):
             "Critique": "risk-critical",
         }.get(risk_level, "")
 
-        col1, col2, col3 = st.columns(3)
+        c1, c2, c3 = st.columns(3)
 
-        col1.markdown(
+        c1.markdown(
             f"<div class='metric-title'>Niveau</div>"
             f"<div class='metric-value'><span class='risk-badge {risk_class}'>{risk_level}</span></div>",
             unsafe_allow_html=True,
         )
 
-        col2.markdown(
-            f"<div class='metric-title'>Score</div><div class='metric-value'>{summary.get('risk_score',0)}</div>",
+        c2.markdown(
+            f"<div class='metric-title'>Score</div>"
+            f"<div class='metric-value'>{summary.get('risk_score', 0)}</div>",
             unsafe_allow_html=True,
         )
 
-        col3.markdown(
+        c3.markdown(
             f"<div class='metric-title'>Non conformes</div>"
-            f"<div class='metric-value'>{summary.get('failed_controls',0)} / {summary.get('total_controls',len(findings))}</div>",
+            f"<div class='metric-value'>{summary.get('failed_controls', 0)} / {summary.get('total_controls', len(findings))}</div>",
             unsafe_allow_html=True,
         )
 
         st.divider()
 
-    # Style pour le statut
     def style_result(val):
         color = "#ff4b4b" if val == "Fail" else "#00cc96"
         return f"color: {color}; font-weight: bold"
 
-    # Sécurité: si la colonne Result n'existe pas
-    if "Result" in df.columns:
-        styled_df = df.style.applymap(style_result, subset=["Result"])
+    if not df.empty and "Result" in df.columns:
+        styled_df = df.style.map(style_result, subset=["Result"])
     else:
         styled_df = df.style
 
@@ -123,4 +153,4 @@ if os.path.exists(report_file):
         },
     )
 else:
-    st.info("Lancez 'python3 -m src.main' pour générer les données.")
+    st.info("Sélectionnez un tenant puis cliquez sur 'Lancer l'audit'.")
