@@ -8,7 +8,6 @@ from src.main import run_audit_workflow
 
 st.set_page_config(page_title="Dashboard Audit PFE", layout="wide")
 
-st.title("Résultats de l'Audit Sécurité")
 
 if "audit_done" not in st.session_state:
     st.session_state.audit_done = False
@@ -46,6 +45,7 @@ if st.button("Lancer l'audit"):
         st.error("Tenant invalide ou ID manquant.")
 
 if st.session_state.audit_done and st.session_state.current_report:
+    st.title("Résultats de l'Audit")
     data = st.session_state.current_report
 
     if isinstance(data, list):
