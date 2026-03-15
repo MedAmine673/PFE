@@ -10,6 +10,7 @@ from src.tenants import get_all_tenants
 from src.storage.fs_store import save_json
 from src.config import RAW_DATA_PATH
 from src.engine.severity import classify_risk
+from src.storage.db_store import init_db, save_audit_to_db
 
 REPORTS_PATH = "data/reports"
 
@@ -42,7 +43,7 @@ def run_audit_workflow(tenant_id, tenant_name):
 
         audit_results = roles_results + mfa_results + inactivity_results
 
-        # 5) Classification des risques
+        # 6) Classification des risques
         risk_score = sum(r.get("Risk Points", 0) for r in audit_results)
         risk_level = classify_risk(int(risk_score))
         failed_controls = sum(1 for r in audit_results if not r.get("Passed", True))
@@ -59,7 +60,7 @@ def run_audit_workflow(tenant_id, tenant_name):
             "findings": audit_results,
         }
 
-        # 6) Sauvegarde du rapport final
+        # Sauvegarde JSON seulement
         save_json(REPORTS_PATH, f"{tenant_name}_audit_report", report)
         print(f" Rapport généré : {len(audit_results)} contrôles effectués.\n")
 
@@ -70,9 +71,20 @@ def run_audit_workflow(tenant_id, tenant_name):
         return None
 
 
+def run_and_save_audit(tenant_id, tenant_name):
+    report = run_audit_workflow(tenant_id, tenant_name)
+
+    if report:
+        save_audit_to_db(tenant_id, tenant_name, report)
+
+    return report
+
+
 if __name__ == "__main__":
+    init_db()
+
     tenants = get_all_tenants()
-    print(f" {len(tenants)} tenant(s) détecté(s). Début du scan...\n")
+    print(f" {len(tenants)} tenant(s) détecté(s). Début du scan sans sauvegarde historique...\n")
 
     for t in tenants:
         if t["id"]:

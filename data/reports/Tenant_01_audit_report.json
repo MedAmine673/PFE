@@ -15,8 +15,8 @@
             "Passed": true,
             "Criticality": "High",
             "Risk Points": 0,
-            "Affected": 5,
-            "Details": "5 GA trouvé(s) :\nMohamed Amine BEN OUHIBA, Lee Gu, test, Adele Vance, Henrietta Mueller"
+            "Affected": 6,
+            "Details": "6 GA trouvé(s) :\nMohamed Amine BEN OUHIBA, Lee Gu, test, Adele Vance, Diego Siciliani, Henrietta Mueller"
         },
         {
             "Control ID": "AAD-02",
@@ -81,8 +81,8 @@
             "Passed": false,
             "Criticality": "High",
             "Risk Points": 7,
-            "Affected": 5,
-            "Details": "Administrateurs sans MFA : Lee Gu (LeeG@335lzf.onmicrosoft.com), azerty (azerty@335lzf.onmicrosoft.com), Alex Wilber (AlexW@335lzf.onmicrosoft.com), Adele Vance (AdeleV@335lzf.onmicrosoft.com), Henrietta Mueller (HenriettaM@335lzf.onmicrosoft.com)"
+            "Affected": 6,
+            "Details": "Administrateurs sans MFA : Lee Gu (LeeG@335lzf.onmicrosoft.com), azerty (azerty@335lzf.onmicrosoft.com), Alex Wilber (AlexW@335lzf.onmicrosoft.com), Adele Vance (AdeleV@335lzf.onmicrosoft.com), Diego Siciliani (DiegoS@335lzf.onmicrosoft.com), Henrietta Mueller (HenriettaM@335lzf.onmicrosoft.com)"
         },
         {
             "Control ID": "AAD-08",

@@ -8828,6 +8828,43 @@
             }
         },
         {
+            "id": "be8e9e56-4e9e-4bd1-a8a2-c669ff5a10c1",
+            "principalId": "6e85fcf4-ced8-44e3-8e6d-20ae1e94a093",
+            "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+            "directoryScopeId": "/",
+            "appScopeId": null,
+            "createdUsing": "be8e9e56-4e9e-4bd1-a8a2-c669ff5a10c1",
+            "createdDateTime": "2026-03-15T11:11:45.62Z",
+            "modifiedDateTime": "0001-01-01T08:00:00Z",
+            "status": "Provisioned",
+            "memberType": "Direct",
+            "scheduleInfo": {
+                "startDateTime": "2026-03-15T11:11:45.62Z",
+                "recurrence": null,
+                "expiration": {
+                    "type": "noExpiration",
+                    "endDateTime": null,
+                    "duration": null
+                }
+            },
+            "principal": {
+                "@odata.type": "#microsoft.graph.user",
+                "id": "6e85fcf4-ced8-44e3-8e6d-20ae1e94a093",
+                "displayName": "Diego Siciliani",
+                "userPrincipalName": "DiegoS@335lzf.onmicrosoft.com",
+                "mail": "DiegoS@335lzf.onmicrosoft.com",
+                "businessPhones": [
+                    "+1 205 555 0108"
+                ],
+                "givenName": "Diego",
+                "jobTitle": "HR Manager",
+                "mobilePhone": null,
+                "officeLocation": "14/1108",
+                "preferredLanguage": "en-US",
+                "surname": "Siciliani"
+            }
+        },
+        {
             "id": "26e7c57c-6811-4d53-a45a-49a191cb2295",
             "principalId": "01f3b7fc-c203-44e5-a83a-73c6112e4e83",
             "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",

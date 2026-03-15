@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
-
 from src.tenants import get_all_tenants
-from src.main import run_audit_workflow
+from src.main import run_and_save_audit
+from src.storage.db_store import get_audit_runs_by_tenant, get_audit_report_by_run_id
 
 st.set_page_config(
     page_title="Dashboard Audit PFE",
@@ -64,6 +64,15 @@ st.markdown(
         background: #f8d7da;
         color: #7f1d1d;
     }
+    .action-label {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+    .small-button button {
+        height: 42px;
+        font-size: 15px;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -78,6 +87,9 @@ if "current_report" not in st.session_state:
 if "audited_tenant_name" not in st.session_state:
     st.session_state.audited_tenant_name = None
 
+if "show_success_message" not in st.session_state:
+    st.session_state.show_success_message = False
+
 tenants = get_all_tenants()
 
 if not tenants:
@@ -88,39 +100,95 @@ tenant_names = [t["name"] for t in tenants]
 
 st.markdown("<div class='main-title'>Audit Sécurité Microsoft Entra ID</div>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='subtitle'>Sélectionnez un tenant, lancez l'audit, puis consultez les résultats de sécurité.</div>",
+    "<div class='subtitle'>Sélectionnez un tenant, lancez un nouvel audit ou consultez un audit déjà enregistré.</div>",
     unsafe_allow_html=True,
 )
 
-left, right = st.columns([3, 1])
+selected_tenant_name = st.selectbox(
+    "Choisir un tenant à auditer",
+    tenant_names
+)
 
-with left:
-    selected_tenant_name = st.selectbox(
-        "Choisir un tenant à auditer",
-        tenant_names
-    )
-    selected_tenant = next((t for t in tenants if t["name"] == selected_tenant_name), None)
-    st.caption(f"Tenant sélectionné : {selected_tenant_name}")
+selected_tenant = next((t for t in tenants if t["name"] == selected_tenant_name), None)
+st.caption(f"Tenant sélectionné : {selected_tenant_name}")
 
-with right:
-    st.write("")
-    st.write("")
-    launch = st.button("Lancer l'audit", use_container_width=True, type="primary")
+if st.session_state.show_success_message:
+    st.success(f"Audit terminé pour {st.session_state.audited_tenant_name}.")
+    st.session_state.show_success_message = False
+
+# Historique relu à chaque exécution de la page
+audit_runs = get_audit_runs_by_tenant(selected_tenant_name)
+
+def format_audit_label(audit_run):
+    dt = audit_run["audit_date"]
+    date_part, time_part = dt.split("T")
+    time_part = time_part.split(".")[0]
+    return f"Audit #{audit_run['id']} — {date_part} {time_part}"
+
+st.markdown("### Actions")
+
+col1, col2 = st.columns([1, 1])
+
+with col1:
+    st.markdown("<div class='small-button'>", unsafe_allow_html=True)
+    launch = st.button("Lancer un nouvel audit", type="primary")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+    if audit_runs:
+        st.markdown("<div class='action-label'>Historique des audits</div>", unsafe_allow_html=True)
+
+        selected_audit_label = st.selectbox(
+            "Choisir un ancien audit",
+            options=audit_runs,
+            format_func=format_audit_label,
+            key=f"history_select_{selected_tenant_name}",
+            label_visibility="collapsed"
+        )
+
+        load_old_audit = st.button("Afficher cet audit", use_container_width=True)
+    else:
+        st.markdown("<div class='action-label'>Historique des audits</div>", unsafe_allow_html=True)
+
+        st.selectbox(
+            "Choisir un ancien audit",
+            options=["Aucun audit enregistré pour ce tenant"],
+            disabled=True,
+            label_visibility="collapsed",
+            key=f"history_empty_{selected_tenant_name}"
+        )
+
+        load_old_audit = False
 
 if launch:
     if selected_tenant and selected_tenant.get("id"):
         with st.spinner(f"Audit en cours pour {selected_tenant_name}..."):
-            report_data = run_audit_workflow(selected_tenant["id"], selected_tenant["name"])
+            report_data = run_and_save_audit(
+                selected_tenant["id"],
+                selected_tenant["name"]
+            )
 
         if report_data:
             st.session_state.audit_done = True
             st.session_state.current_report = report_data
             st.session_state.audited_tenant_name = selected_tenant_name
-            st.success(f"Audit terminé pour {selected_tenant_name}.")
+            st.session_state.show_success_message = True
+            st.rerun()
         else:
             st.error("Erreur pendant l'audit.")
     else:
         st.error("Tenant invalide ou ID manquant.")
+
+if load_old_audit and audit_runs:
+    report_data = get_audit_report_by_run_id(selected_audit_label["id"])
+
+    if report_data:
+        st.session_state.audit_done = True
+        st.session_state.current_report = report_data
+        st.session_state.audited_tenant_name = selected_tenant_name
+        st.success(f"Ancien audit chargé pour {selected_tenant_name}.")
+    else:
+        st.error("Impossible de charger cet audit.")
 
 if st.session_state.audit_done and st.session_state.current_report:
     data = st.session_state.current_report
@@ -142,6 +210,9 @@ if st.session_state.audit_done and st.session_state.current_report:
 
     if summary:
         st.markdown(f"### Classification du risque · {displayed_tenant_name}")
+
+        if summary.get("audit_date"):
+            st.caption(f"Date de l'audit : {summary.get('audit_date')}")
 
         risk_level = summary.get("risk_level", "N/A")
         risk_class = {
@@ -227,4 +298,4 @@ if st.session_state.audit_done and st.session_state.current_report:
     else:
         st.info("Aucun résultat à afficher pour ce tenant.")
 else:
-    st.info("Sélectionnez un tenant puis cliquez sur 'Lancer l'audit'.")
+    st.info("Sélectionnez un tenant puis lancez un nouvel audit ou chargez un audit existant.")
