@@ -1,9 +1,9 @@
 {
     "tenant": "Tenant_01",
     "summary": {
-        "risk_score": 24,
+        "risk_score": 31,
         "risk_level": "Critique",
-        "failed_controls": 6,
+        "failed_controls": 7,
         "total_controls": 10
     },
     "findings": [
@@ -44,12 +44,12 @@
             "Control ID": "AAD-04",
             "Category": "PIM",
             "Requirement": "Activation GA nécessite approbation",
-            "Result": "Pass",
-            "Passed": true,
+            "Result": "Fail",
+            "Passed": false,
             "Criticality": "High",
-            "Risk Points": 0,
-            "Affected": 0,
-            "Details": "Configuré"
+            "Risk Points": 7,
+            "Affected": 1,
+            "Details": "Échec : Approbation non activée pour l'utilisateur final"
         },
         {
             "Control ID": "AAD-05",

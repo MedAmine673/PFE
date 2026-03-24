@@ -116,7 +116,6 @@ if st.session_state.show_success_message:
     st.success(f"Audit terminé pour {st.session_state.audited_tenant_name}.")
     st.session_state.show_success_message = False
 
-# Historique relu à chaque exécution de la page
 audit_runs = get_audit_runs_by_tenant(selected_tenant_name)
 
 def format_audit_label(audit_run):
@@ -189,6 +188,31 @@ if load_old_audit and audit_runs:
         st.success(f"Ancien audit chargé pour {selected_tenant_name}.")
     else:
         st.error("Impossible de charger cet audit.")
+
+# ====== NOUVELLE SECTION : GRAPHIQUES HISTORIQUES ======
+if audit_runs:
+    st.markdown("## Évolution du tenant")
+
+    history_df = pd.DataFrame(audit_runs)
+
+    if not history_df.empty:
+        history_df["audit_date"] = pd.to_datetime(history_df["audit_date"])
+        history_df = history_df.sort_values("audit_date")
+
+        history_df["audit_label"] = history_df["audit_date"].dt.strftime("%Y-%m-%d %H:%M:%S")
+        history_df = history_df.set_index("audit_label")
+
+        g1, g2 = st.columns(2)
+
+        with g1:
+            st.markdown("### Score de risque")
+            st.line_chart(history_df["risk_score"])
+
+        with g2:
+            st.markdown("### Contrôles non conformes")
+            st.line_chart(history_df["failed_controls"])
+else:
+    st.info("Aucun historique disponible pour afficher les graphes.")
 
 if st.session_state.audit_done and st.session_state.current_report:
     data = st.session_state.current_report

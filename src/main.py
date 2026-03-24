@@ -70,7 +70,6 @@ def run_audit_workflow(tenant_id, tenant_name):
         print(f"Erreur sur {tenant_name} : {str(e)}")
         return None
 
-
 def run_and_save_audit(tenant_id, tenant_name):
     report = run_audit_workflow(tenant_id, tenant_name)
 
@@ -79,12 +78,12 @@ def run_and_save_audit(tenant_id, tenant_name):
 
     return report
 
-
 if __name__ == "__main__":
     init_db()
-
+    print("Base SQLite initialisée.")
+    
     tenants = get_all_tenants()
-    print(f" {len(tenants)} tenant(s) détecté(s). Début du scan sans sauvegarde historique...\n")
+    print(f" {len(tenants)} tenant(s) détecté(s). Début du scan...\n")
 
     for t in tenants:
         if t["id"]:
