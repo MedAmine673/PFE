@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
+
 from src.tenants import get_all_tenants
 from src.main import run_and_save_audit
 from src.storage.db_store import get_audit_runs_by_tenant, get_audit_report_by_run_id
@@ -118,11 +120,62 @@ if st.session_state.show_success_message:
 
 audit_runs = get_audit_runs_by_tenant(selected_tenant_name)
 
+
 def format_audit_label(audit_run):
     dt = audit_run["audit_date"]
     date_part, time_part = dt.split("T")
     time_part = time_part.split(".")[0]
     return f"Audit #{audit_run['id']} — {date_part} {time_part}"
+
+
+def build_history_dataframe(audit_runs_data):
+    if not audit_runs_data:
+        return pd.DataFrame()
+
+    df = pd.DataFrame(audit_runs_data).copy()
+
+    if df.empty:
+        return df
+
+    df["audit_date"] = pd.to_datetime(df["audit_date"], errors="coerce")
+    df = df.dropna(subset=["audit_date"])
+    df = df.sort_values("audit_date").reset_index(drop=True)
+
+    df["display_date"] = df["audit_date"].dt.strftime("%d/%m %H:%M")
+    df["audit_order"] = range(1, len(df) + 1)
+
+    # Limiter l’affichage aux 15 derniers audits pour garder le graphe lisible
+    if len(df) > 15:
+        df = df.tail(15).reset_index(drop=True)
+
+    return df
+
+
+def build_line_chart(df, y_col, y_title):
+    base = alt.Chart(df).encode(
+        x=alt.X(
+            "display_date:N",
+            sort=None,
+            title="Date d'audit",
+            axis=alt.Axis(labelAngle=-35)
+        ),
+        y=alt.Y(
+            f"{y_col}:Q",
+            title=y_title
+        ),
+        tooltip=[
+            alt.Tooltip("display_date:N", title="Date"),
+            alt.Tooltip("risk_score:Q", title="Score de risque"),
+            alt.Tooltip("failed_controls:Q", title="Non conformes"),
+            alt.Tooltip("risk_level:N", title="Niveau"),
+        ]
+    )
+
+    line = base.mark_line(strokeWidth=3)
+    points = base.mark_circle(size=90)
+
+    return (line + points).properties(height=320)
+
 
 st.markdown("### Actions")
 
@@ -189,28 +242,24 @@ if load_old_audit and audit_runs:
     else:
         st.error("Impossible de charger cet audit.")
 
-# ====== NOUVELLE SECTION : GRAPHIQUES HISTORIQUES ======
-if audit_runs:
-    st.markdown("## Évolution du tenant")
+# ====== SECTION REPLIABLE : HISTORIQUE ======
+history_df = build_history_dataframe(audit_runs)
 
-    history_df = pd.DataFrame(audit_runs)
-
-    if not history_df.empty:
-        history_df["audit_date"] = pd.to_datetime(history_df["audit_date"])
-        history_df = history_df.sort_values("audit_date")
-
-        history_df["audit_label"] = history_df["audit_date"].dt.strftime("%Y-%m-%d %H:%M:%S")
-        history_df = history_df.set_index("audit_label")
+if not history_df.empty:
+    with st.expander("Afficher l’évolution du tenant", expanded=False):
+        st.caption("Les graphes ci-dessous montrent l’évolution du tenant à partir des audits enregistrés.")
 
         g1, g2 = st.columns(2)
 
         with g1:
-            st.markdown("### Score de risque")
-            st.line_chart(history_df["risk_score"])
+            st.markdown("### Évolution du score de risque")
+            risk_chart = build_line_chart(history_df, "risk_score", "Score de risque")
+            st.altair_chart(risk_chart, use_container_width=True)
 
         with g2:
-            st.markdown("### Contrôles non conformes")
-            st.line_chart(history_df["failed_controls"])
+            st.markdown("### Évolution des non-conformités")
+            fail_chart = build_line_chart(history_df, "failed_controls", "Contrôles non conformes")
+            st.altair_chart(fail_chart, use_container_width=True)
 else:
     st.info("Aucun historique disponible pour afficher les graphes.")
 
