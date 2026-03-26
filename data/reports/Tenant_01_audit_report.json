@@ -26,8 +26,8 @@
             "Passed": false,
             "Criticality": "Critical",
             "Risk Points": 10,
-            "Affected": 2,
-            "Details": "Cumuls détectés : test (Global Administrator, License Administrator); azerty (Security Administrator, Application Administrator)"
+            "Affected": 1,
+            "Details": "Cumuls détectés : azerty (Security Administrator, Application Administrator)"
         },
         {
             "Control ID": "AAD-03",
@@ -43,7 +43,7 @@
         {
             "Control ID": "AAD-04",
             "Category": "PIM",
-            "Requirement": "Activation GA nécessite approbation",
+            "Requirement": "Activation Global Administrator nécessite approbation",
             "Result": "Fail",
             "Passed": false,
             "Criticality": "High",
