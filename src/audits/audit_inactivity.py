@@ -6,28 +6,24 @@ from src.engine.compare import is_empty
 def audit_inactivity(activity_data, roles_data, baseline):
     audit_results = []
 
-    config = baseline.get("activity_audit", {})
-    max_inactivity_days = config.get("max_inactivity_days", 90)
-    alert_on_never_logged_in = config.get("alert_on_never_logged_in", True)
+    aad09 = baseline.get("AAD-09", {})
+    aad10 = baseline.get("AAD-10", {})
 
     users_signin_activity = activity_data.get("users_signin_activity", [])
     active_assignments = roles_data.get("active_assignments", [])
     eligible_assignments = roles_data.get("eligible_assignments", [])
     role_definitions = roles_data.get("role_definitions", [])
 
-    critical_roles = baseline.get("roles_audit", {}).get("critical_roles", [])
+    critical_roles = aad09.get("critical_roles", aad10.get("critical_roles", []))
 
-    # Mapping role name -> roleDefinitionId
     name_to_role_id = {
         rd.get("displayName"): rd.get("id")
         for rd in role_definitions
         if rd.get("displayName") and rd.get("id")
     }
 
-    # 1) Construire la liste des admins
     admin_users = {}
 
-    # Admins actifs
     for role in active_assignments:
         role_name = role.get("displayName")
         if role_name in critical_roles:
@@ -41,7 +37,6 @@ def audit_inactivity(activity_data, roles_data, baseline):
                         "roles": admin_users.get(key, {}).get("roles", []) + [role_name],
                     }
 
-    # Admins éligibles
     critical_role_ids = {
         name_to_role_id.get(role_name)
         for role_name in critical_roles
@@ -61,8 +56,7 @@ def audit_inactivity(activity_data, roles_data, baseline):
                 key = str(user_key).lower()
                 role_name = next(
                     (
-                        name
-                        for name, rid in name_to_role_id.items()
+                        name for name, rid in name_to_role_id.items()
                         if rid == item.get("roleDefinitionId")
                     ),
                     "Rôle critique",
@@ -75,7 +69,6 @@ def audit_inactivity(activity_data, roles_data, baseline):
                     "roles": existing_roles + [role_name],
                 }
 
-    # 2) Construire le dictionnaire activité
     activity_by_upn = {}
     activity_by_id = {}
 
@@ -88,12 +81,12 @@ def audit_inactivity(activity_data, roles_data, baseline):
         if user_id:
             activity_by_id[user_id.lower()] = user
 
-    # 3) AAD-09 : administrateur inactif > N jours
-    inactive_admins = []
     now = datetime.now(timezone.utc)
-
-    # 4) AAD-10 : compte sans historique de connexion
+    inactive_admins = []
     never_logged_in_admins = []
+
+    max_inactivity_days = aad09.get("max_inactivity_days", 90)
+    alert_on_never_logged_in = aad10.get("alert_on_never_logged_in", True)
 
     for key, admin in admin_users.items():
         upn = (admin.get("userPrincipalName") or "").lower()
@@ -102,7 +95,6 @@ def audit_inactivity(activity_data, roles_data, baseline):
         if not user_activity:
             user_activity = activity_by_id.get(key)
 
-        # Si aucune donnée activité trouvée
         if not user_activity:
             if alert_on_never_logged_in:
                 never_logged_in_admins.append(
@@ -113,7 +105,6 @@ def audit_inactivity(activity_data, roles_data, baseline):
         sign_in_activity = user_activity.get("signInActivity", {}) or {}
         last_signin = sign_in_activity.get("lastSignInDateTime")
 
-        # Cas jamais connecté / pas d'historique
         if not last_signin:
             if alert_on_never_logged_in:
                 never_logged_in_admins.append(
@@ -121,7 +112,6 @@ def audit_inactivity(activity_data, roles_data, baseline):
                 )
             continue
 
-        # Cas inactif
         try:
             last_signin_dt = datetime.fromisoformat(last_signin.replace("Z", "+00:00"))
             inactivity_days = (now - last_signin_dt).days
@@ -137,32 +127,32 @@ def audit_inactivity(activity_data, roles_data, baseline):
                 )
 
     # AAD-09
-    is_inactivity_ok = is_empty(inactive_admins)
-
-    details_aad09 = (
-        "Conforme"
-        if is_inactivity_ok
-        else f"Administrateurs inactifs : {', '.join(inactive_admins)}"
-    )
-
-    audit_results.append(
-        create_finding(
-            "AAD-09",
-            "Activity",
-            f"Administrateur inactif depuis plus de {max_inactivity_days} jours",
-            is_inactivity_ok,
-            int(len(inactive_admins)),
-            details_aad09,
+    if aad09.get("enabled", True):
+        is_ok = is_empty(inactive_admins)
+        details = (
+            "Conforme"
+            if is_ok
+            else f"Administrateurs inactifs : {', '.join(inactive_admins)}"
         )
-    )
+
+        audit_results.append(
+            create_finding(
+                "AAD-09",
+                "Activity",
+                f"Administrateur inactif depuis plus de {max_inactivity_days} jours",
+                is_ok,
+                int(len(inactive_admins)),
+                details,
+                aad09.get("severity", "Low")
+            )
+        )
 
     # AAD-10
-    if alert_on_never_logged_in:
-        is_never_login_ok = is_empty(never_logged_in_admins)
-
-        details_aad10 = (
+    if aad10.get("enabled", True) and alert_on_never_logged_in:
+        is_ok = is_empty(never_logged_in_admins)
+        details = (
             "Conforme"
-            if is_never_login_ok
+            if is_ok
             else f"Comptes sans historique de connexion : {', '.join(never_logged_in_admins)}"
         )
 
@@ -171,9 +161,10 @@ def audit_inactivity(activity_data, roles_data, baseline):
                 "AAD-10",
                 "Activity",
                 "Compte administrateur sans historique de connexion",
-                is_never_login_ok,
+                is_ok,
                 int(len(never_logged_in_admins)),
-                details_aad10,
+                details,
+                aad10.get("severity", "Low")
             )
         )
 
