@@ -6,220 +6,419 @@ from src.tenants import get_all_tenants
 from src.main import run_and_save_audit
 from src.storage.db_store import get_audit_runs_by_tenant, get_audit_report_by_run_id
 
+# ─── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Dashboard Audit PFE",
+    page_title="CloudShift — Audit M365",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
 )
 
-st.markdown(
-    """
-    <style>
-    .main-title {
-        font-size: 38px;
-        font-weight: 700;
-        margin-bottom: 6px;
-    }
-    .subtitle {
-        font-size: 17px;
-        color: #6b7280;
-        margin-bottom: 24px;
-    }
-    .metric-card {
-        background: #ffffff;
-        padding: 18px;
-        border-radius: 16px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-    }
-    .metric-title {
-        font-size: 15px;
-        font-weight: 600;
-        color: #6b7280;
-        margin-bottom: 8px;
-    }
-    .metric-value {
-        font-size: 30px;
-        font-weight: 700;
-        color: #111827;
-    }
-    .risk-badge {
-        padding: 8px 16px;
-        border-radius: 12px;
-        font-weight: 700;
-        display: inline-block;
-        font-size: 16px;
-    }
-    .risk-low {
-        background: #e6f4ea;
-        color: #137333;
-    }
-    .risk-medium {
-        background: #fff4e5;
-        color: #b45309;
-    }
-    .risk-high {
-        background: #ffe4e6;
-        color: #b91c1c;
-    }
-    .risk-critical {
-        background: #f8d7da;
-        color: #7f1d1d;
-    }
-    .action-label {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 6px;
-    }
-    .small-button button {
-        height: 42px;
-        font-size: 15px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# ─── CSS ──────────────────────────────────────────────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-if "audit_done" not in st.session_state:
-    st.session_state.audit_done = False
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
 
-if "current_report" not in st.session_state:
-    st.session_state.current_report = None
+/* Layout */
+.block-container {
+    padding-top: 0 !important;
+    padding-bottom: 2rem !important;
+    max-width: 1200px;
+}
 
-if "audited_tenant_name" not in st.session_state:
-    st.session_state.audited_tenant_name = None
+/* Hide Streamlit chrome */
+#MainMenu, footer, header { visibility: hidden; }
+.stDeployButton { display: none; }
 
-if "show_success_message" not in st.session_state:
-    st.session_state.show_success_message = False
+/* ── Header ── */
+.app-header {
+    padding: 28px 0 20px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.app-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.3px;
+    margin: 0;
+}
 
-tenants = get_all_tenants()
+/* ── Section heading ── */
+.section-heading {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: #6b7280;
+    margin: 28px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
 
-if not tenants:
-    st.warning("Aucun tenant trouvé.")
-    st.stop()
+/* ── Panel (generic white card) ── */
+.panel {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px 22px;
+}
 
-tenant_names = [t["name"] for t in tenants]
+/* ── KPI cards ── */
+.kpi-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px 22px;
+    border-top: 3px solid #e5e7eb;
+}
+.kpi-card.accent-red   { border-top-color: #dc2626; }
+.kpi-card.accent-green { border-top-color: #16a34a; }
+.kpi-card.accent-blue  { border-top-color: #1a56a0; }
 
-st.markdown("<div class='main-title'>Audit Sécurité Microsoft Entra ID</div>", unsafe_allow_html=True)
-st.markdown(
-    "<div class='subtitle'>Sélectionnez un tenant, lancez un nouvel audit ou consultez un audit déjà enregistré.</div>",
-    unsafe_allow_html=True,
-)
+.kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: #6b7280;
+    margin-bottom: 10px;
+}
+.kpi-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+.kpi-value.red   { color: #dc2626; }
+.kpi-value.green { color: #16a34a; }
+.kpi-value.blue  { color: #1a56a0; }
+.kpi-sub {
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 400;
+}
 
-selected_tenant_name = st.selectbox(
-    "Choisir un tenant à auditer",
-    tenant_names
-)
+/* ── Risk badge ── */
+.risk-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+}
+.risk-faible   { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.risk-modere   { background: #fefce8; color: #a16207; border: 1px solid #fef08a; }
+.risk-eleve    { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+.risk-critique { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
 
-selected_tenant = next((t for t in tenants if t["name"] == selected_tenant_name), None)
-st.caption(f"Tenant sélectionné : {selected_tenant_name}")
+/* ── Score bar ── */
+.score-bar-track {
+    background: #f3f4f6;
+    border-radius: 4px;
+    height: 6px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+.score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+}
 
-if st.session_state.show_success_message:
-    st.success(f"Audit terminé pour {st.session_state.audited_tenant_name}.")
-    st.session_state.show_success_message = False
+/* ── Buttons ── */
+.stButton > button {
+    border-radius: 6px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    transition: all 0.15s !important;
+}
+.stButton > button[kind="primary"] {
+    background: #1a56a0 !important;
+    border-color: #1a56a0 !important;
+}
+.stButton > button[kind="primary"]:hover {
+    background: #154280 !important;
+    border-color: #154280 !important;
+    box-shadow: 0 2px 8px rgba(26,86,160,0.25) !important;
+}
+.stButton > button:not([kind="primary"]):hover {
+    border-color: #9ca3af !important;
+}
 
-audit_runs = get_audit_runs_by_tenant(selected_tenant_name)
+/* ── Selectbox ── */
+.stSelectbox > div > div {
+    border-radius: 6px !important;
+    border-color: #d1d5db !important;
+    font-size: 13px !important;
+}
+
+/* ── Tabs ── */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 0;
+    border-bottom: 2px solid #e5e7eb;
+    background: transparent;
+}
+.stTabs [data-baseweb="tab"] {
+    border-radius: 0 !important;
+    padding: 10px 20px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+    border-bottom: 2px solid transparent !important;
+    margin-bottom: -2px !important;
+    background: transparent !important;
+}
+.stTabs [aria-selected="true"] {
+    color: #1a56a0 !important;
+    font-weight: 600 !important;
+    border-bottom-color: #1a56a0 !important;
+}
+
+/* ── Dataframe ── */
+.stDataFrame {
+    border-radius: 8px !important;
+    border: 1px solid #e5e7eb !important;
+    overflow: hidden !important;
+}
+
+/* ── Alerts ── */
+.stAlert { border-radius: 6px !important; }
+
+/* ── Expander ── */
+.streamlit-expanderHeader {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    background: #f9fafb !important;
+    border-radius: 6px !important;
+}
+
+/* ── Caption ── */
+.stCaption { color: #9ca3af !important; font-size: 12px !important; }
+</style>
+""", unsafe_allow_html=True)
 
 
+# ─── Header ───────────────────────────────────────────────────────────────────
+st.markdown("""
+<div class="app-header">
+    <div class="app-title">Audit Sécurité Microsoft 365</div>
+</div>
+""", unsafe_allow_html=True)
+
+
+# ─── Session state ────────────────────────────────────────────────────────────
+for key, default in [
+    ("audit_done", False),
+    ("current_report", None),
+    ("audited_tenant_name", None),
+    ("show_success_message", False),
+]:
+    if key not in st.session_state:
+        st.session_state[key] = default
+
+
+# ─── Helpers ──────────────────────────────────────────────────────────────────
 def format_audit_label(audit_run):
     dt = audit_run["audit_date"]
     date_part, time_part = dt.split("T")
     time_part = time_part.split(".")[0]
-    return f"Audit #{audit_run['id']} — {date_part} {time_part}"
+    return f"Audit #{audit_run['id']} — {date_part}  {time_part}"
 
 
 def build_history_dataframe(audit_runs_data):
     if not audit_runs_data:
         return pd.DataFrame()
-
     df = pd.DataFrame(audit_runs_data).copy()
-
     if df.empty:
         return df
-
     df["audit_date"] = pd.to_datetime(df["audit_date"], errors="coerce")
     df = df.dropna(subset=["audit_date"])
     df = df.sort_values("audit_date").reset_index(drop=True)
-
     df["display_date"] = df["audit_date"].dt.strftime("%d/%m %H:%M")
     df["audit_order"] = range(1, len(df) + 1)
-
-    # Limiter l’affichage aux 15 derniers audits pour garder le graphe lisible
     if len(df) > 15:
         df = df.tail(15).reset_index(drop=True)
-
     return df
 
 
-def build_line_chart(df, y_col, y_title):
+def risk_badge_html(level):
+    css_map = {
+        "Faible":   "risk-faible",
+        "Modéré":   "risk-modere",
+        "Élevé":    "risk-eleve",
+        "Critique": "risk-critique",
+    }
+    css = css_map.get(level, "")
+    return f'<span class="risk-badge {css}">{level}</span>'
+
+
+def risk_bar_color(level):
+    return {
+        "Faible":   "#16a34a",
+        "Modéré":   "#ca8a04",
+        "Élevé":    "#ea580c",
+        "Critique": "#dc2626",
+    }.get(level, "#9ca3af")
+
+
+def build_line_chart(df, y_col, y_title, line_color):
     base = alt.Chart(df).encode(
         x=alt.X(
             "display_date:N",
             sort=None,
-            title="Date d'audit",
-            axis=alt.Axis(labelAngle=-35)
+            title=None,
+            axis=alt.Axis(
+                labelAngle=-30,
+                labelFontSize=11,
+                labelColor="#9ca3af",
+                domainColor="#e5e7eb",
+                tickColor="#e5e7eb",
+                gridColor="#f3f4f6",
+            )
         ),
         y=alt.Y(
             f"{y_col}:Q",
-            title=y_title
+            title=y_title,
+            axis=alt.Axis(
+                labelFontSize=11,
+                labelColor="#9ca3af",
+                titleColor="#6b7280",
+                titleFontSize=11,
+                gridColor="#f3f4f6",
+                domainOpacity=0,
+            )
         ),
         tooltip=[
-            alt.Tooltip("display_date:N", title="Date"),
-            alt.Tooltip("risk_score:Q", title="Score de risque"),
-            alt.Tooltip("failed_controls:Q", title="Non conformes"),
-            alt.Tooltip("risk_level:N", title="Niveau"),
+            alt.Tooltip("display_date:N",    title="Date"),
+            alt.Tooltip("risk_score:Q",       title="Score"),
+            alt.Tooltip("failed_controls:Q",  title="Non conformes"),
+            alt.Tooltip("risk_level:N",       title="Niveau"),
         ]
     )
+    area   = base.mark_area(opacity=0.06, color=line_color, interpolate="monotone")
+    line   = base.mark_line(strokeWidth=2, color=line_color, interpolate="monotone")
+    points = base.mark_circle(size=55, color=line_color, opacity=1)
+    return (area + line + points).properties(
+        height=210,
+        background="#ffffff",
+    ).configure_view(strokeWidth=0)
 
-    line = base.mark_line(strokeWidth=3)
-    points = base.mark_circle(size=90)
 
-    return (line + points).properties(height=320)
+def style_result(val):
+    if val == "Fail":
+        return "color: #dc2626; font-weight: 700"
+    if val == "Pass":
+        return "color: #16a34a; font-weight: 700"
+    return ""
 
 
-st.markdown("### Actions")
+def style_criticality(val):
+    return ""
 
-col1, col2 = st.columns([1, 1])
 
-with col1:
-    st.markdown("<div class='small-button'>", unsafe_allow_html=True)
-    launch = st.button("Lancer un nouvel audit", type="primary")
-    st.markdown("</div>", unsafe_allow_html=True)
+# ─── Load tenants ─────────────────────────────────────────────────────────────
+tenants = get_all_tenants()
+if not tenants:
+    st.warning("Aucun tenant trouvé. Vérifiez votre fichier tenants.json.")
+    st.stop()
 
-with col2:
+tenant_names = [t["name"] for t in tenants]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 1 · Sélection du tenant
+# ══════════════════════════════════════════════════════════════════════════════
+st.markdown('<div class="section-heading">Tenant cible</div>', unsafe_allow_html=True)
+
+col_sel, col_id = st.columns([3, 2])
+
+with col_sel:
+    selected_tenant_name = st.selectbox(
+        "Tenant",
+        tenant_names,
+        label_visibility="collapsed",
+    )
+
+with col_id:
+    selected_tenant = next((t for t in tenants if t["name"] == selected_tenant_name), None)
+    tid = selected_tenant.get("id", "") if selected_tenant else ""
+    st.caption(f"Tenant ID : {tid}")
+
+audit_runs = get_audit_runs_by_tenant(selected_tenant_name)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 2 · Actions
+# ══════════════════════════════════════════════════════════════════════════════
+st.markdown('<div class="section-heading">Actions</div>', unsafe_allow_html=True)
+
+col_new, col_hist = st.columns(2)
+
+with col_new:
+    st.markdown(
+        '<div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:10px">'
+        'Nouvel audit</div>',
+        unsafe_allow_html=True,
+    )
+    launch = st.button("Lancer un audit", type="primary", use_container_width=True)
+    st.markdown(
+        '<div style="font-size:11px;color:#9ca3af;margin-top:6px">'
+        'Collecte les données via Microsoft Graph API et génère un rapport complet.'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+
+with col_hist:
+    st.markdown(
+        '<div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:10px">'
+        'Historique des audits</div>',
+        unsafe_allow_html=True,
+    )
     if audit_runs:
-        st.markdown("<div class='action-label'>Historique des audits</div>", unsafe_allow_html=True)
-
         selected_audit_label = st.selectbox(
-            "Choisir un ancien audit",
+            "Audit",
             options=audit_runs,
             format_func=format_audit_label,
             key=f"history_select_{selected_tenant_name}",
-            label_visibility="collapsed"
+            label_visibility="collapsed",
         )
-
         load_old_audit = st.button("Afficher cet audit", use_container_width=True)
     else:
-        st.markdown("<div class='action-label'>Historique des audits</div>", unsafe_allow_html=True)
-
         st.selectbox(
-            "Choisir un ancien audit",
-            options=["Aucun audit enregistré pour ce tenant"],
+            "Audit",
+            options=["Aucun audit enregistré"],
             disabled=True,
             label_visibility="collapsed",
-            key=f"history_empty_{selected_tenant_name}"
+            key=f"history_empty_{selected_tenant_name}",
+        )
+        load_old_audit = False
+        st.markdown(
+            '<div style="font-size:11px;color:#9ca3af;margin-top:6px">'
+            "Lancez un premier audit pour alimenter l'historique."
+            '</div>',
+            unsafe_allow_html=True,
         )
 
-        load_old_audit = False
+# Messages de retour
+if st.session_state.show_success_message:
+    st.success(f"Audit terminé avec succès pour {st.session_state.audited_tenant_name}.")
+    st.session_state.show_success_message = False
 
+
+# ─── Logique métier ───────────────────────────────────────────────────────────
 if launch:
     if selected_tenant and selected_tenant.get("id"):
-        with st.spinner(f"Audit en cours pour {selected_tenant_name}..."):
+        with st.spinner(f"Audit en cours pour {selected_tenant_name}…"):
             report_data = run_and_save_audit(
                 selected_tenant["id"],
-                selected_tenant["name"]
+                selected_tenant["name"],
             )
-
         if report_data:
             st.session_state.audit_done = True
             st.session_state.current_report = report_data
@@ -227,148 +426,235 @@ if launch:
             st.session_state.show_success_message = True
             st.rerun()
         else:
-            st.error("Erreur pendant l'audit.")
+            st.error("Une erreur est survenue pendant l'audit. Vérifiez les logs.")
     else:
-        st.error("Tenant invalide ou ID manquant.")
+        st.error("Tenant invalide ou identifiant manquant.")
 
 if load_old_audit and audit_runs:
     report_data = get_audit_report_by_run_id(selected_audit_label["id"])
-
     if report_data:
         st.session_state.audit_done = True
         st.session_state.current_report = report_data
         st.session_state.audited_tenant_name = selected_tenant_name
-        st.success(f"Ancien audit chargé pour {selected_tenant_name}.")
+        st.success(f"Audit #{selected_audit_label['id']} chargé pour {selected_tenant_name}.")
     else:
         st.error("Impossible de charger cet audit.")
 
-# ====== SECTION REPLIABLE : HISTORIQUE ======
-history_df = build_history_dataframe(audit_runs)
 
-if not history_df.empty:
-    with st.expander("Afficher l’évolution du tenant", expanded=False):
-        st.caption("Les graphes ci-dessous montrent l’évolution du tenant à partir des audits enregistrés.")
-
-        g1, g2 = st.columns(2)
-
-        with g1:
-            st.markdown("### Évolution du score de risque")
-            risk_chart = build_line_chart(history_df, "risk_score", "Score de risque")
-            st.altair_chart(risk_chart, use_container_width=True)
-
-        with g2:
-            st.markdown("### Évolution des non-conformités")
-            fail_chart = build_line_chart(history_df, "failed_controls", "Contrôles non conformes")
-            st.altair_chart(fail_chart, use_container_width=True)
-else:
-    st.info("Aucun historique disponible pour afficher les graphes.")
-
+# ══════════════════════════════════════════════════════════════════════════════
+# 3 · Résultats
+# ══════════════════════════════════════════════════════════════════════════════
 if st.session_state.audit_done and st.session_state.current_report:
     data = st.session_state.current_report
-    displayed_tenant_name = st.session_state.audited_tenant_name or selected_tenant_name
+    displayed_tenant = st.session_state.audited_tenant_name or selected_tenant_name
 
-    st.markdown("## Résultats de l'audit")
-
-    if isinstance(data, list):
-        findings = data
-        summary = {}
-    else:
-        findings = data.get("findings", [])
-        summary = data.get("summary", {})
+    findings = data.get("findings", []) if isinstance(data, dict) else data
+    summary  = data.get("summary",  {}) if isinstance(data, dict) else {}
 
     df = pd.DataFrame(findings)
-
     if not df.empty and "Passed" in df.columns:
         df = df.drop(columns=["Passed"])
 
+    # ── Section heading with date ─────────────────────────────────────────────
+    audit_date_str = ""
+    if summary.get("audit_date"):
+        audit_date_str = (
+            "  ·  "
+            + summary["audit_date"].replace("T", " ").split(".")[0]
+        )
+    st.markdown(
+        f'<div class="section-heading">Résultats — {displayed_tenant}{audit_date_str}</div>',
+        unsafe_allow_html=True,
+    )
+
+    # ── KPI Cards ─────────────────────────────────────────────────────────────
     if summary:
-        st.markdown(f"### Classification du risque · {displayed_tenant_name}")
-
-        if summary.get("audit_date"):
-            st.caption(f"Date de l'audit : {summary.get('audit_date')}")
-
         risk_level = summary.get("risk_level", "N/A")
-        risk_class = {
-            "Faible": "risk-low",
-            "Modéré": "risk-medium",
-            "Élevé": "risk-high",
-            "Critique": "risk-critical",
-        }.get(risk_level, "")
+        risk_score = summary.get("risk_score", 0)
+        failed     = summary.get("failed_controls", 0)
+        total      = summary.get("total_controls", len(findings))
+        passed     = total - failed
+        bar_color  = risk_bar_color(risk_level)
+        score_pct  = min(int(risk_score * 2.5), 100)
+        fail_pct   = int((failed / total) * 100) if total else 0
 
-        c1, c2, c3 = st.columns(3)
+        c1, c2, c3, c4 = st.columns(4)
 
         with c1:
-            st.markdown(
-                f"""
-                <div class='metric-card'>
-                    <div class='metric-title'>Niveau de risque</div>
-                    <div class='metric-value'>
-                        <span class='risk-badge {risk_class}'>{risk_level}</span>
-                    </div>
+            st.markdown(f"""
+            <div class="kpi-card accent-red">
+                <div class="kpi-label">Niveau de risque</div>
+                {risk_badge_html(risk_level)}
+                <div class="score-bar-track">
+                    <div class="score-bar-fill"
+                         style="width:{score_pct}%;background:{bar_color}"></div>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            </div>
+            """, unsafe_allow_html=True)
 
         with c2:
-            st.markdown(
-                f"""
-                <div class='metric-card'>
-                    <div class='metric-title'>Score</div>
-                    <div class='metric-value'>{summary.get('risk_score', 0)}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            st.markdown(f"""
+            <div class="kpi-card">
+                <div class="kpi-label">Score de risque</div>
+                <div class="kpi-value">{risk_score}</div>
+                <div class="kpi-sub">points accumulés</div>
+            </div>
+            """, unsafe_allow_html=True)
 
         with c3:
-            st.markdown(
-                f"""
-                <div class='metric-card'>
-                    <div class='metric-title'>Contrôles non conformes</div>
-                    <div class='metric-value'>{summary.get('failed_controls', 0)} / {summary.get('total_controls', len(findings))}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
+            st.markdown(f"""
+            <div class="kpi-card">
+                <div class="kpi-label">Non conformes</div>
+                <div class="kpi-value">{failed}<span
+                    style="font-size:17px;color:#d1d5db;font-weight:400"> / {total}</span></div>
+                <div class="kpi-sub">{fail_pct}% des contrôles</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with c4:
+            st.markdown(f"""
+            <div class="kpi-card">
+                <div class="kpi-label">Conformes</div>
+                <div class="kpi-value">{passed}<span
+                    style="font-size:17px;color:#d1d5db;font-weight:400"> / {total}</span></div>
+                <div class="kpi-sub">{100 - fail_pct}% des contrôles</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
+
+    # ── Tabs ──────────────────────────────────────────────────────────────────
+    tab_detail, tab_history = st.tabs(["Détail des contrôles", "Évolution historique"])
+
+    # ── Tab 1 · Tableau ───────────────────────────────────────────────────────
+    with tab_detail:
+        if not df.empty:
+            styled = df.style
+            if "Result"      in df.columns:
+                styled = styled.map(style_result,      subset=["Result"])
+            if "Criticality" in df.columns:
+                styled = styled.map(style_criticality, subset=["Criticality"])
+
+            col_cfg = {}
+            if "Control ID"  in df.columns:
+                col_cfg["Control ID"]  = st.column_config.TextColumn("Control ID",  width="small")
+            if "Category"    in df.columns:
+                col_cfg["Category"]    = st.column_config.TextColumn("Category",    width="small")
+            if "Requirement" in df.columns:
+                col_cfg["Requirement"] = st.column_config.TextColumn("Requirement", width="medium")
+            if "Result"      in df.columns:
+                col_cfg["Result"]      = st.column_config.TextColumn("Result",      width="small")
+            if "Criticality" in df.columns:
+                col_cfg["Criticality"] = st.column_config.TextColumn("Criticality", width="small")
+            if "Risk Points" in df.columns:
+                col_cfg["Risk Points"] = st.column_config.NumberColumn("Risk Points", width="small")
+            if "Affected"    in df.columns:
+                col_cfg["Affected"]    = st.column_config.NumberColumn("Affected",   width="small")
+            if "Details"     in df.columns:
+                col_cfg["Details"]     = st.column_config.TextColumn(
+                    "Details", width="large", help="Détails du contrôle"
+                )
+
+            # 35px par ligne + 38px header, pas de ligne vide en trop
+            table_height = 38 + len(df) * 35
+
+            st.dataframe(
+                styled,
+                use_container_width=True,
+                hide_index=True,
+                column_config=col_cfg,
+                height=table_height,
+            )
+        else:
+            st.info("Aucun résultat à afficher pour ce tenant.")
+
+    # ── Tab 2 · Graphes d'évolution ───────────────────────────────────────────
+    with tab_history:
+        history_df = build_history_dataframe(audit_runs)
+
+        if not history_df.empty:
+            st.caption(
+                f"{len(history_df)} audit(s) enregistré(s) pour {selected_tenant_name}."
+            )
+            g1, g2 = st.columns(2)
+
+            with g1:
+                st.markdown(
+                    '<div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:4px">'
+                    'Score de risque</div>'
+                    '<div style="font-size:11px;color:#9ca3af;margin-bottom:10px">'
+                    'Évolution dans le temps</div>',
+                    unsafe_allow_html=True,
+                )
+                st.altair_chart(
+                    build_line_chart(history_df, "risk_score", "Score", "#1a56a0"),
+                    use_container_width=True,
+                )
+
+            with g2:
+                st.markdown(
+                    '<div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:4px">'
+                    'Contrôles non conformes</div>'
+                    '<div style="font-size:11px;color:#9ca3af;margin-bottom:10px">'
+                    'Évolution dans le temps</div>',
+                    unsafe_allow_html=True,
+                )
+                st.altair_chart(
+                    build_line_chart(history_df, "failed_controls", "Non conformes", "#dc2626"),
+                    use_container_width=True,
+                )
+
+
+        else:
+            st.info(
+                "Aucune donnée historique disponible. "
+                "Lancez plusieurs audits pour voir l'évolution."
             )
 
-        st.write("")
-
-    if not df.empty:
-        st.markdown("### Détail des contrôles")
-
-        def style_result(val):
-            if val == "Fail":
-                return "color: #ef4444; font-weight: 700"
-            if val == "Pass":
-                return "color: #10b981; font-weight: 700"
-            return ""
-
-        if "Result" in df.columns:
-            styled_df = df.style.map(style_result, subset=["Result"])
-        else:
-            styled_df = df.style
-
-        st.dataframe(
-            styled_df,
-            use_container_width=True,
-            hide_index=True,
-            column_config={
-                "Control ID": st.column_config.TextColumn("Control ID", width="small"),
-                "Category": st.column_config.TextColumn("Category", width="small"),
-                "Requirement": st.column_config.TextColumn("Requirement", width="medium"),
-                "Result": st.column_config.TextColumn("Result", width="small"),
-                "Criticality": st.column_config.TextColumn("Criticality", width="small"),
-                "Risk Points": st.column_config.NumberColumn("Risk Points", width="small"),
-                "Affected": st.column_config.NumberColumn("Affected", width="small"),
-                "Details": st.column_config.TextColumn(
-                    "Details",
-                    width="large",
-                    help="Détails complets du contrôle",
-                ),
-            },
-        )
-    else:
-        st.info("Aucun résultat à afficher pour ce tenant.")
 else:
-    st.info("Sélectionnez un tenant puis lancez un nouvel audit ou chargez un audit existant.")
+    # ── État vide ─────────────────────────────────────────────────────────────
+    st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 52px 40px;
+        text-align: center;
+    ">
+        <div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:6px">
+            Aucun audit sélectionné
+        </div>
+        <div style="font-size:13px;color:#9ca3af;line-height:1.7">
+            Sélectionnez un tenant, puis lancez un nouvel audit<br>
+            ou chargez un audit existant depuis l'historique.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Graphes accessibles même sans audit actif
+    history_df = build_history_dataframe(audit_runs)
+    if not history_df.empty:
+        st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+        with st.expander(f"Évolution historique — {selected_tenant_name}"):
+            g1, g2 = st.columns(2)
+            with g1:
+                st.markdown(
+                    '<div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:10px">'
+                    'Score de risque</div>',
+                    unsafe_allow_html=True,
+                )
+                st.altair_chart(
+                    build_line_chart(history_df, "risk_score", "Score", "#1a56a0"),
+                    use_container_width=True,
+                )
+            with g2:
+                st.markdown(
+                    '<div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:10px">'
+                    'Contrôles non conformes</div>',
+                    unsafe_allow_html=True,
+                )
+                st.altair_chart(
+                    build_line_chart(history_df, "failed_controls", "Non conformes", "#dc2626"),
+                    use_container_width=True,
+                )
