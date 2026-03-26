@@ -1,23 +1,118 @@
 {
-    "roles_audit": {
-        "min_global_admins": 2,
-        "max_global_admins": 8,
-        "critical_roles": [
-            "Global Administrator",
-            "Privileged Role Administrator",
-            "Security Administrator",
-            "Application Administrator",
-            "Cloud Application Administrator"
-        ]
-       
-    },
-    "mfa_audit": {
+  "AAD-01": {
+    "enabled": true,
+    "category": "Roles",
+    "severity": "High",
+    "min_global_admins": 2,
+    "max_global_admins": 8
+  },
+  "AAD-02": {
+    "enabled": true,
+    "category": "Roles",
+    "severity": "Critical",
+    "critical_roles": [
+      "Global Administrator",
+      "Privileged Role Administrator",
+      "Security Administrator",
+      "Application Administrator",
+      "Cloud Application Administrator"
+    ],
+    "max_privileged_roles_per_user": 1
+  },
+  "AAD-03": {
+    "enabled": true,
+    "category": "PIM",
+    "severity": "Medium",
+    "critical_roles": [
+      "Global Administrator",
+      "Privileged Role Administrator",
+      "Security Administrator",
+      "Application Administrator",
+      "Cloud Application Administrator"
+    ],
+    "require_pim_for_privileged_roles": true
+  },
+  "AAD-04": {
+    "enabled": true,
+    "category": "PIM",
+    "severity": "High",
+    "target_role": "Global Administrator",
+    "require_approval_for_activation": true
+  },
+  "AAD-05": {
+    "enabled": true,
+    "category": "PIM",
+    "severity": "Low",
+    "critical_roles": [
+      "Global Administrator",
+      "Privileged Role Administrator",
+      "Security Administrator",
+      "Application Administrator",
+      "Cloud Application Administrator"
+    ],
+    "require_mfa_for_pim_activation": true
+  },
+  "AAD-06": {
+    "enabled": true,
+    "category": "PIM",
+    "severity": "Low",
+    "critical_roles": [
+      "Global Administrator",
+      "Privileged Role Administrator",
+      "Security Administrator",
+      "Application Administrator",
+      "Cloud Application Administrator"
+    ],
+    "max_activation_duration_hours": 8
+  },
+  "AAD-07": {
+    "enabled": true,
+    "category": "MFA",
+    "severity": "High",
+    "critical_roles": [
+      "Global Administrator",
+      "Privileged Role Administrator",
+      "Security Administrator",
+      "Application Administrator",
+      "Cloud Application Administrator"
+    ],
     "require_mfa_for_admins": true,
-    "allowed_mfa_methods": [],
-    "check_conditional_access": true
-    },
-    "activity_audit": {
-        "max_inactivity_days": 90,
-        "alert_on_never_logged_in": true
-    }
+    "allowed_mfa_methods": []
+  },
+  "AAD-08": {
+    "enabled": true,
+    "category": "CA",
+    "severity": "Medium",
+    "require_admin_ca_policy": true,
+    "accepted_policy_states": [
+      "enabled",
+      "enabledForReportingButNotEnforced"
+    ]
+  },
+  "AAD-09": {
+    "enabled": true,
+    "category": "Activity",
+    "severity": "Low",
+    "critical_roles": [
+      "Global Administrator",
+      "Privileged Role Administrator",
+      "Security Administrator",
+      "Application Administrator",
+      "Cloud Application Administrator"
+    ],
+    "max_inactivity_days": 90
+  },
+  "AAD-10": {
+    "enabled": true,
+    "category": "Activity",
+    "severity": "Low",
+    "critical_roles": [
+      "Global Administrator",
+      "Privileged Role Administrator",
+      "Security Administrator",
+      "Application Administrator",
+      "Cloud Application Administrator"
+    ],
+    "alert_on_never_logged_in": true
+  }
 }
