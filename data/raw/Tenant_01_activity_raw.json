@@ -153,12 +153,12 @@
             "userPrincipalName": "MedAmine@335lzf.onmicrosoft.com",
             "id": "04a75dd8-508e-43f5-85c4-9e07db469c8a",
             "signInActivity": {
-                "lastSignInDateTime": "2026-03-24T08:39:29Z",
-                "lastSignInRequestId": "073b33e1-6183-4be8-9ce0-6ba033380500",
-                "lastNonInteractiveSignInDateTime": "2026-03-24T15:43:25Z",
-                "lastNonInteractiveSignInRequestId": "d02314f4-bc43-4340-95f3-f5f4d8847900",
-                "lastSuccessfulSignInDateTime": "2026-03-24T15:43:25Z",
-                "lastSuccessfulSignInRequestId": "d02314f4-bc43-4340-95f3-f5f4d8847900"
+                "lastSignInDateTime": "2026-03-28T18:33:12Z",
+                "lastSignInRequestId": "42285585-780d-4784-a6d1-8be312614f00",
+                "lastNonInteractiveSignInDateTime": "2026-03-28T18:51:03Z",
+                "lastNonInteractiveSignInRequestId": "72a8f4eb-09f9-415a-bb55-fe8325a75400",
+                "lastSuccessfulSignInDateTime": "2026-03-28T18:51:03Z",
+                "lastSuccessfulSignInRequestId": "72a8f4eb-09f9-415a-bb55-fe8325a75400"
             }
         },
         {
@@ -231,8 +231,8 @@
             "userPrincipalName": "test@335lzf.onmicrosoft.com",
             "id": "005e05ee-c776-4f42-89bb-baa73672f4e6",
             "signInActivity": {
-                "lastSignInDateTime": "2026-02-22T14:13:20Z",
-                "lastSignInRequestId": "80a70ee4-638f-4448-bf43-149023e49300",
+                "lastSignInDateTime": "2026-03-27T21:28:14Z",
+                "lastSignInRequestId": "80bbe9e5-4bce-4c77-8b44-a5d2ce433e00",
                 "lastNonInteractiveSignInDateTime": "2026-02-16T11:55:31Z",
                 "lastNonInteractiveSignInRequestId": "cc74b404-011c-4cc4-aa46-500c2c2e9800",
                 "lastSuccessfulSignInDateTime": "2026-02-16T11:55:31Z",

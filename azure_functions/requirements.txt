@@ -1,0 +1,8 @@
+azure-functions
+azure-storage-blob
+requests
+msal
+streamlit
+pandas
+altair
+python-dotenv

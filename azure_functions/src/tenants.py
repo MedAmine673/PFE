@@ -1,5 +1,4 @@
 import json
-import logging
 from src.config import TENANTS_FILE
 
 def get_all_tenants():
@@ -15,6 +14,5 @@ def get_all_tenants():
             for t in tenants if t.get("id")
         ]
 
-    except Exception as e:
-        logging.exception("Erreur lecture tenants file '%s': %s", TENANTS_FILE, str(e))
+    except Exception:
         return []
