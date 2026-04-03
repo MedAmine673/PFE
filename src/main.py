@@ -52,13 +52,6 @@ def _build_report(tenant_id, tenant_name, audit_results, execution_mode):
 
 
 def run_audit_workflow(tenant_id, tenant_name, execution_mode="local"):
-    """
-    Exécute le workflow complet d'audit pour un tenant.
-
-    Modes disponibles :
-    - local : sauvegarde des données brutes, rapport JSON local et possibilité de stockage SQLite
-    - cloud : aucun stockage local ; le rapport est seulement retourné à l'appelant
-    """
     print(f"--- Audit pour {tenant_name} | mode={execution_mode} ---")
 
     if execution_mode not in ["local", "cloud"]:
@@ -67,28 +60,23 @@ def run_audit_workflow(tenant_id, tenant_name, execution_mode="local"):
     try:
         token = get_token(tenant_id)
 
-        # 1) Collecte des données
         raw_roles = fetch_raw_roles(token)
         raw_auth = fetch_raw_auth(token)
         raw_activity = fetch_raw_activity(token)
 
-        # 2) Sauvegarde des données brutes uniquement en mode local
         if execution_mode == "local":
             save_json(RAW_DATA_PATH, f"{tenant_name}_roles_raw", raw_roles)
             save_json(RAW_DATA_PATH, f"{tenant_name}_auth_raw", raw_auth)
             save_json(RAW_DATA_PATH, f"{tenant_name}_activity_raw", raw_activity)
 
-        # 3) Chargement de la baseline
         baseline = _load_baseline()
 
-        # 4) Exécution des audits
         roles_results = audit_roles(raw_roles, baseline)
         mfa_results = audit_mfa(raw_auth, raw_roles, baseline)
         inactivity_results = audit_inactivity(raw_activity, raw_roles, baseline)
 
         audit_results = roles_results + mfa_results + inactivity_results
 
-        # 5) Construction du rapport
         report = _build_report(
             tenant_id=tenant_id,
             tenant_name=tenant_name,
@@ -96,7 +84,6 @@ def run_audit_workflow(tenant_id, tenant_name, execution_mode="local"):
             execution_mode=execution_mode,
         )
 
-        # 6) Sauvegarde du rapport uniquement en mode local
         if execution_mode == "local":
             save_json(REPORTS_PATH, f"{tenant_name}_audit_report", report)
 
@@ -109,10 +96,6 @@ def run_audit_workflow(tenant_id, tenant_name, execution_mode="local"):
 
 
 def run_and_save_audit(tenant_id, tenant_name):
-    """
-    Utilisé par l'interface Streamlit.
-    Exécute l'audit en mode local puis sauvegarde le résultat dans SQLite.
-    """
     report = run_audit_workflow(tenant_id, tenant_name, execution_mode="local")
 
     if report:
@@ -122,10 +105,6 @@ def run_and_save_audit(tenant_id, tenant_name):
 
 
 def run_cloud_audit(tenant_id, tenant_name):
-    """
-    Utilisé par Azure Function.
-    Exécute l'audit en mode cloud sans écriture locale ni SQLite.
-    """
     return run_audit_workflow(tenant_id, tenant_name, execution_mode="cloud")
 
 
@@ -138,10 +117,7 @@ if __name__ == "__main__":
 
     for t in tenants:
         if t.get("id"):
-            report = run_audit_workflow(t["id"], t["name"], execution_mode="local")
-
-            if report:
-                save_audit_to_db(t["id"], t["name"], report)
+            run_audit_workflow(t["id"], t["name"], execution_mode="local")
         else:
             print(f"Saut de {t['name']} : ID manquant.")
 

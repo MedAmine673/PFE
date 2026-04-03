@@ -23,6 +23,7 @@
                         "microsoft.cloudPC/allEntities/allProperties/allTasks",
                         "microsoft.commerce.billing/allEntities/allProperties/allTasks",
                         "microsoft.commerce.billing/purchases/standard/read",
+                        "microsoft.commerce.tenantRelationships/customerDelegatedAdminPrivileges/allProperties/allTasks",
                         "microsoft.directory/accessReviews/allProperties/allTasks",
                         "microsoft.directory/accessReviews/definitions/allProperties/allTasks",
                         "microsoft.directory/adminConsentRequestPolicy/allProperties/allTasks",
@@ -5251,6 +5252,28 @@
                     "id": "88d8e3e3-8f55-4a1e-953a-9b9898b8876b"
                 }
             ]
+        },
+        {
+            "id": "fc8ad4e2-40e4-4724-8317-bcda7503ecbf",
+            "description": "Manage all aspects of granular delegated admin privileges (GDAP) relationships in a customer tenant.",
+            "displayName": "Customer Delegated Admin Relationship Administrator",
+            "isBuiltIn": true,
+            "isEnabled": true,
+            "resourceScopes": [
+                "/"
+            ],
+            "templateId": "fc8ad4e2-40e4-4724-8317-bcda7503ecbf",
+            "version": "1",
+            "rolePermissions": [
+                {
+                    "allowedResourceActions": [
+                        "microsoft.commerce.tenantRelationships/customerDelegatedAdminPrivileges/allProperties/allTasks"
+                    ],
+                    "condition": null
+                }
+            ],
+            "inheritsPermissionsFrom@odata.context": "https://graph.microsoft.com/v1.0/$metadata#roleManagement/directory/roleDefinitions('fc8ad4e2-40e4-4724-8317-bcda7503ecbf')/inheritsPermissionsFrom",
+            "inheritsPermissionsFrom": []
         },
         {
             "id": "f42252d9-5400-4d7b-b9ef-cc582dbb8577",

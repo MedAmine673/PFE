@@ -4,6 +4,7 @@ import json
 import logging
 from datetime import datetime, timezone
 
+import requests
 import azure.functions as func
 from azure.storage.blob import BlobServiceClient
 
@@ -120,6 +121,127 @@ def send_notification_log(tenant_name: str, report: dict, blob_name: str) -> Non
     )
 
 
+def build_teams_message_card(tenant_name: str, report: dict, blob_name: str) -> dict:
+    summary = report.get("summary", {})
+    risk_level = summary.get("risk_level", "N/A")
+    risk_score = summary.get("risk_score", 0)
+    failed_controls = summary.get("failed_controls", 0)
+    total_controls = summary.get("total_controls", 0)
+    audit_date = summary.get("audit_date", "N/A")
+
+    color_map = {
+        "Faible": "2EB886",
+        "Modéré": "D4A72C",
+        "Élevé": "E67E22",
+        "Critique": "C0392B"
+    }
+    theme_color = color_map.get(risk_level, "0078D4")
+
+    return {
+        "@type": "MessageCard",
+        "@context": "http://schema.org/extensions",
+        "summary": f"Alerte audit Microsoft 365 - {tenant_name}",
+        "themeColor": theme_color,
+        "title": "Alerte de sécurité Microsoft 365",
+        "sections": [
+            {
+                "activityTitle": f"Tenant : {tenant_name}",
+                "activitySubtitle": "Résultat d'un audit automatisé Azure Function",
+                "facts": [
+                    {"name": "Niveau de risque", "value": str(risk_level)},
+                    {"name": "Score de risque", "value": str(risk_score)},
+                    {"name": "Contrôles non conformes", "value": f"{failed_controls}/{total_controls}"},
+                    {"name": "Date d'audit", "value": str(audit_date)},
+                    {"name": "Rapport Blob", "value": str(blob_name)},
+                ],
+                "markdown": True,
+                "text": (
+                    "Une alerte a été déclenchée car le niveau de risque est élevé "
+                    "ou critique, ou parce qu'un contrôle critique est en échec."
+                ),
+            }
+        ]
+    }
+
+
+def send_teams_notification(tenant_name: str, report: dict, blob_name: str) -> bool:
+    webhook_url = os.getenv("TEAMS_WEBHOOK_URL")
+
+    if not webhook_url:
+        logging.warning("Webhook Teams non configuré. Notification ignorée.")
+        return False
+
+    summary = report.get("summary", {})
+
+    risk_level = summary.get("risk_level", "N/A")
+    risk_score = summary.get("risk_score", 0)
+    failed_controls = summary.get("failed_controls", 0)
+    total_controls = summary.get("total_controls", 0)
+    audit_date = summary.get("audit_date", "N/A")
+
+    # Couleur selon le niveau de risque
+    color_map = {
+        "Faible": "2EB886",
+        "Modéré": "D4A72C",
+        "Élevé": "E67E22",
+        "Critique": "C0392B"
+    }
+    theme_color = color_map.get(risk_level, "0078D4")
+
+    payload = {
+        "@type": "MessageCard",
+        "@context": "http://schema.org/extensions",
+        "summary": f"Alerte audit Microsoft 365 - {tenant_name}",
+        "themeColor": theme_color,
+        "title": " Alerte de sécurité Microsoft 365",
+        "sections": [
+            {
+                "activityTitle": f" Tenant : **{tenant_name}**",
+                "activitySubtitle": "Résultat d’un audit automatisé Azure Function",
+                "facts": [
+                    {"name": "Niveau de risque", "value": str(risk_level)},
+                    {"name": "Score de risque", "value": str(risk_score)},
+                    {"name": "Contrôles non conformes", "value": f"{failed_controls}/{total_controls}"},
+                    {"name": "Date d’audit", "value": str(audit_date)},
+                ],
+                "markdown": True,
+                "text": (
+                    " Une alerte a été déclenchée car le niveau de risque est **élevé ou critique**, "
+                    "ou parce qu’un contrôle critique est en échec.\n\n"
+                    f" Rapport disponible dans le Blob Storage : `{blob_name}`"
+                ),
+            }
+        ]
+    }
+
+    try:
+        response = requests.post(
+            webhook_url,
+            json=payload,
+            timeout=10,
+            headers={"Content-Type": "application/json"}
+        )
+
+        if 200 <= response.status_code < 300:
+            logging.info("Notification Teams envoyée avec succès pour %s", tenant_name)
+            return True
+
+        logging.error(
+            "Échec envoi Teams | tenant=%s | status=%s | body=%s",
+            tenant_name,
+            response.status_code,
+            response.text
+        )
+        return False
+
+    except Exception as e:
+        logging.exception(
+            "Erreur pendant l'envoi de la notification Teams pour %s : %s",
+            tenant_name,
+            str(e)
+        )
+        return False
+
 def enrich_report_metadata(report: dict, tenant_id: str, tenant_name: str) -> dict:
     if report is None:
         return None
@@ -134,11 +256,12 @@ def enrich_report_metadata(report: dict, tenant_id: str, tenant_name: str) -> di
 
 @app.function_name(name="audit_timer_function")
 @app.schedule(
-    schedule="0 0 8 * * *",
+    schedule="0 0 7 * * *",
     arg_name="mytimer",
     run_on_startup=False,
     use_monitor=True
 )
+
 def audit_timer_function(mytimer: func.TimerRequest) -> None:
     logging.info(
         "Début exécution Azure Function | date=%s",
@@ -168,6 +291,7 @@ def audit_timer_function(mytimer: func.TimerRequest) -> None:
     success_count = 0
     error_count = 0
     alert_count = 0
+    teams_sent_count = 0
 
     for tenant in tenants:
         tenant_id = tenant.get("id")
@@ -193,6 +317,11 @@ def audit_timer_function(mytimer: func.TimerRequest) -> None:
 
             if should_trigger_alert(report):
                 send_notification_log(tenant_name, report, blob_name)
+
+                teams_sent = send_teams_notification(tenant_name, report, blob_name)
+                if teams_sent:
+                    teams_sent_count += 1
+
                 alert_count += 1
                 logging.info("Alerte déclenchée pour le tenant : %s", tenant_name)
             else:
@@ -212,8 +341,9 @@ def audit_timer_function(mytimer: func.TimerRequest) -> None:
         logging.info("----- Fin audit tenant : %s -----", tenant_name)
 
     logging.info(
-        "Fin de l'exécution automatisée | succès=%s | erreurs=%s | alertes=%s",
+        "Fin de l'exécution automatisée | succès=%s | erreurs=%s | alertes=%s | notifications_teams=%s",
         success_count,
         error_count,
-        alert_count
+        alert_count,
+        teams_sent_count
     )

@@ -1,6 +1,9 @@
 {
     "tenant": "Tenant_02",
+    "tenant_id": "8e6a1d21-8db3-49bc-bc09-f21ce36091f2",
+    "execution_mode": "local",
     "summary": {
+        "audit_date": "2026-04-03T13:36:07Z",
         "risk_score": 25,
         "risk_level": "Critique",
         "failed_controls": 7,

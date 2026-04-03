@@ -153,12 +153,12 @@
             "userPrincipalName": "MedAmine@335lzf.onmicrosoft.com",
             "id": "04a75dd8-508e-43f5-85c4-9e07db469c8a",
             "signInActivity": {
-                "lastSignInDateTime": "2026-03-28T18:33:12Z",
-                "lastSignInRequestId": "42285585-780d-4784-a6d1-8be312614f00",
-                "lastNonInteractiveSignInDateTime": "2026-03-28T18:51:03Z",
-                "lastNonInteractiveSignInRequestId": "72a8f4eb-09f9-415a-bb55-fe8325a75400",
-                "lastSuccessfulSignInDateTime": "2026-03-28T18:51:03Z",
-                "lastSuccessfulSignInRequestId": "72a8f4eb-09f9-415a-bb55-fe8325a75400"
+                "lastSignInDateTime": "2026-04-02T11:47:06Z",
+                "lastSignInRequestId": "a9baf7e1-296e-4efe-ae2f-00c187f11c00",
+                "lastNonInteractiveSignInDateTime": "2026-04-02T14:07:41Z",
+                "lastNonInteractiveSignInRequestId": "9f7997cc-03f6-4cd0-bef4-0c3be3570600",
+                "lastSuccessfulSignInDateTime": "2026-04-02T14:07:41Z",
+                "lastSuccessfulSignInRequestId": "9f7997cc-03f6-4cd0-bef4-0c3be3570600"
             }
         },
         {
