@@ -532,7 +532,7 @@ if st.session_state.audit_done and st.session_state.current_report:
             # Colonnes à afficher dans l'ordre
             display_cols = [c for c in
                 ["Control ID", "Category", "Requirement", "Result",
-                 "Criticality", "Risk Points", "Affected", "Details"]
+                 "Criticality", "Risk Points", "Affected", "Details","Recommendation"]
                 if c in df.columns]
 
             def _cell_style(col, val):

@@ -4,6 +4,7 @@ from datetime import datetime
 
 DB_PATH = "data/audit_history.db"
 
+
 def init_db():
     os.makedirs("data", exist_ok=True)
 
@@ -35,11 +36,10 @@ def init_db():
             risk_points INTEGER NOT NULL,
             affected INTEGER NOT NULL,
             details TEXT,
+            recommendation TEXT,
             FOREIGN KEY (audit_run_id) REFERENCES audit_runs(id)
         )
     """)
-    conn.commit()
-    conn.close()
 
 
 def save_audit_to_db(tenant_id, tenant_name, report):
@@ -82,8 +82,9 @@ def save_audit_to_db(tenant_id, tenant_name, report):
                 criticality,
                 risk_points,
                 affected,
-                details
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                details,
+                recommendation
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             audit_run_id,
             finding.get("Control ID", ""),
@@ -94,11 +95,12 @@ def save_audit_to_db(tenant_id, tenant_name, report):
             finding.get("Risk Points", 0),
             finding.get("Affected", 0),
             finding.get("Details", ""),
+            finding.get("Recommendation", ""),
         ))
 
-   
     conn.commit()
     conn.close()
+
 
 def get_audit_runs_by_tenant(tenant_name):
     conn = sqlite3.connect(DB_PATH)
@@ -138,7 +140,7 @@ def get_audit_report_by_run_id(audit_run_id):
 
     cur.execute("""
         SELECT control_id, category, requirement, result, criticality,
-               risk_points, affected, details
+               risk_points, affected, details, recommendation
         FROM audit_findings
         WHERE audit_run_id = ?
         ORDER BY id ASC
@@ -167,6 +169,7 @@ def get_audit_report_by_run_id(audit_run_id):
             "Risk Points": row["risk_points"],
             "Affected": row["affected"],
             "Details": row["details"],
+            "Recommendation": row["recommendation"] or "",
         })
 
     report = {

@@ -3,7 +3,7 @@
     "tenant_id": "c47235d5-0241-46ae-94d2-a1b6c5dc9c6b",
     "execution_mode": "local",
     "summary": {
-        "audit_date": "2026-04-03T13:35:56Z",
+        "audit_date": "2026-04-04T13:57:17Z",
         "risk_score": 31,
         "risk_level": "Critique",
         "failed_controls": 7,
@@ -19,7 +19,8 @@
             "Criticality": "High",
             "Risk Points": 0,
             "Affected": 6,
-            "Details": "6 GA trouvé(s) :\nMohamed Amine BEN OUHIBA, Lee Gu, test, Adele Vance, Diego Siciliani, Henrietta Mueller"
+            "Details": "6 GA trouvé(s) :\nMohamed Amine BEN OUHIBA, Lee Gu, test, Adele Vance, Diego Siciliani, Henrietta Mueller",
+            "Recommendation": ""
         },
         {
             "Control ID": "AAD-02",
@@ -30,7 +31,8 @@
             "Criticality": "Critical",
             "Risk Points": 10,
             "Affected": 1,
-            "Details": "Cumuls détectés : azerty (Security Administrator, Application Administrator)"
+            "Details": "Cumuls détectés : azerty (Security Administrator, Application Administrator)",
+            "Recommendation": "Réduire le cumul de rôles critiques par utilisateur et appliquer le principe du moindre privilège."
         },
         {
             "Control ID": "AAD-03",
@@ -41,7 +43,8 @@
             "Criticality": "Medium",
             "Risk Points": 4,
             "Affected": 3,
-            "Details": "Permanents détectés : Global Administrator (Mohamed Amine BEN OUHIBA, Lee Gu, test); Security Administrator (azerty); Application Administrator (Alex Wilber, azerty)"
+            "Details": "Permanents détectés : Global Administrator (Mohamed Amine BEN OUHIBA, Lee Gu, test); Security Administrator (azerty); Application Administrator (Alex Wilber, azerty)",
+            "Recommendation": "Attribuer les rôles critiques via Privileged Identity Management (PIM) au lieu d’assignations permanentes."
         },
         {
             "Control ID": "AAD-04",
@@ -52,7 +55,8 @@
             "Criticality": "High",
             "Risk Points": 7,
             "Affected": 1,
-            "Details": "Échec : Approbation non activée pour l'utilisateur final"
+            "Details": "Échec : Approbation non activée pour l'utilisateur final",
+            "Recommendation": "Configurer une approbation obligatoire pour l’activation du rôle Global Administrator via PIM."
         },
         {
             "Control ID": "AAD-05",
@@ -63,7 +67,8 @@
             "Criticality": "Low",
             "Risk Points": 1,
             "Affected": 1,
-            "Details": "MFA non exigé pour : Application Administrator"
+            "Details": "MFA non exigé pour : Application Administrator",
+            "Recommendation": "Exiger l’authentification multifacteur lors de l’activation des rôles critiques via PIM."
         },
         {
             "Control ID": "AAD-06",
@@ -74,7 +79,8 @@
             "Criticality": "Low",
             "Risk Points": 1,
             "Affected": 1,
-            "Details": "Durée non conforme : Security Administrator (11.0h)"
+            "Details": "Durée non conforme : Security Administrator (11.0h)",
+            "Recommendation": "Réduire la durée maximale d’activation des rôles critiques afin de limiter l’exposition des privilèges."
         },
         {
             "Control ID": "AAD-07",
@@ -85,7 +91,8 @@
             "Criticality": "High",
             "Risk Points": 7,
             "Affected": 6,
-            "Details": "Administrateurs sans MFA : Lee Gu (LeeG@335lzf.onmicrosoft.com), azerty (azerty@335lzf.onmicrosoft.com), Alex Wilber (AlexW@335lzf.onmicrosoft.com), Adele Vance (AdeleV@335lzf.onmicrosoft.com), Diego Siciliani (DiegoS@335lzf.onmicrosoft.com), Henrietta Mueller (HenriettaM@335lzf.onmicrosoft.com)"
+            "Details": "Administrateurs sans MFA : Lee Gu (LeeG@335lzf.onmicrosoft.com), azerty (azerty@335lzf.onmicrosoft.com), Alex Wilber (AlexW@335lzf.onmicrosoft.com), Adele Vance (AdeleV@335lzf.onmicrosoft.com), Diego Siciliani (DiegoS@335lzf.onmicrosoft.com), Henrietta Mueller (HenriettaM@335lzf.onmicrosoft.com)",
+            "Recommendation": "Activer le MFA pour tous les comptes administrateurs concernés."
         },
         {
             "Control ID": "AAD-08",
@@ -96,7 +103,8 @@
             "Criticality": "Medium",
             "Risk Points": 0,
             "Affected": 0,
-            "Details": "Conforme"
+            "Details": "Conforme",
+            "Recommendation": ""
         },
         {
             "Control ID": "AAD-09",
@@ -107,7 +115,8 @@
             "Criticality": "Low",
             "Risk Points": 0,
             "Affected": 0,
-            "Details": "Conforme"
+            "Details": "Conforme",
+            "Recommendation": ""
         },
         {
             "Control ID": "AAD-10",
@@ -118,7 +127,8 @@
             "Criticality": "Low",
             "Risk Points": 1,
             "Affected": 1,
-            "Details": "Comptes sans historique de connexion : azerty (azerty@335lzf.onmicrosoft.com)"
+            "Details": "Comptes sans historique de connexion : azerty (azerty@335lzf.onmicrosoft.com)",
+            "Recommendation": "Analyser les comptes administrateurs jamais connectés et supprimer ou désactiver ceux qui ne sont pas justifiés."
         }
     ]
 }
