@@ -120,50 +120,6 @@ def send_notification_log(tenant_name: str, report: dict, blob_name: str) -> Non
         blob_name,
     )
 
-
-def build_teams_message_card(tenant_name: str, report: dict, blob_name: str) -> dict:
-    summary = report.get("summary", {})
-    risk_level = summary.get("risk_level", "N/A")
-    risk_score = summary.get("risk_score", 0)
-    failed_controls = summary.get("failed_controls", 0)
-    total_controls = summary.get("total_controls", 0)
-    audit_date = summary.get("audit_date", "N/A")
-
-    color_map = {
-        "Faible": "2EB886",
-        "Modéré": "D4A72C",
-        "Élevé": "E67E22",
-        "Critique": "C0392B"
-    }
-    theme_color = color_map.get(risk_level, "0078D4")
-
-    return {
-        "@type": "MessageCard",
-        "@context": "http://schema.org/extensions",
-        "summary": f"Alerte audit Microsoft 365 - {tenant_name}",
-        "themeColor": theme_color,
-        "title": "Alerte de sécurité Microsoft 365",
-        "sections": [
-            {
-                "activityTitle": f"Tenant : {tenant_name}",
-                "activitySubtitle": "Résultat d'un audit automatisé Azure Function",
-                "facts": [
-                    {"name": "Niveau de risque", "value": str(risk_level)},
-                    {"name": "Score de risque", "value": str(risk_score)},
-                    {"name": "Contrôles non conformes", "value": f"{failed_controls}/{total_controls}"},
-                    {"name": "Date d'audit", "value": str(audit_date)},
-                    {"name": "Rapport Blob", "value": str(blob_name)},
-                ],
-                "markdown": True,
-                "text": (
-                    "Une alerte a été déclenchée car le niveau de risque est élevé "
-                    "ou critique, ou parce qu'un contrôle critique est en échec."
-                ),
-            }
-        ]
-    }
-
-
 def send_teams_notification(tenant_name: str, report: dict, blob_name: str) -> bool:
     webhook_url = os.getenv("TEAMS_WEBHOOK_URL")
 

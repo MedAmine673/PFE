@@ -1,4 +1,8 @@
-requests==2.32.3
-python-dotenv==1.0.1
-msal==1.31.0
+azure-functions
+azure-storage-blob
+requests
+msal
+streamlit
+pandas
 altair
+python-dotenv
