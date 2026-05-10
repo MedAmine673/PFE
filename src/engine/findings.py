@@ -12,7 +12,7 @@ def get_recommendation(control_id: str, passed: bool) -> str:
     recommendations = {
         "AAD-01": "Ajuster le nombre de comptes Global Administrator afin de respecter les seuils définis dans la baseline.",
         "AAD-02": "Réduire le cumul de rôles critiques par utilisateur et appliquer le principe du moindre privilège.",
-        "AAD-03": "Attribuer les rôles critiques via Privileged Identity Management (PIM) au lieu d’assignations permanentes.",
+        "AAD-03": "Attribuer les rôles critiques via PIM au lieu d’assignations permanentes.",
         "AAD-04": "Configurer une approbation obligatoire pour l’activation du rôle Global Administrator via PIM.",
         "AAD-05": "Exiger l’authentification multifacteur lors de l’activation des rôles critiques via PIM.",
         "AAD-06": "Réduire la durée maximale d’activation des rôles critiques afin de limiter l’exposition des privilèges.",
