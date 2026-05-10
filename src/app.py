@@ -910,7 +910,39 @@ if st.session_state.audit_done and st.session_state.current_report:
                  "Criticality", "Risk Points", "Affected", "Details", "Recommendation"]
                 if c in df.columns]
 
-            header_cells = "".join(f"<th>{c}</th>" for c in display_cols)
+            col_labels = {
+                "Control ID": "ID contrôle",
+                "Category": "Catégorie",
+                "Requirement": "Exigence",
+                "Result": "Résultat",
+                "Criticality": "Criticité",
+                "Risk Points": "Points de risque",
+                "Affected": "Éléments affectés",
+                "Details": "Détails",
+                "Recommendation": "Recommandation",
+            }
+
+            category_labels = {
+                "Roles": "Rôles",
+                "PIM": "PIM",
+                "MFA": "MFA",
+                "CA": "CA",
+                "Activity": "Activité",
+            }
+
+            result_labels = {
+                "Pass": "Conforme",
+                "Fail": "Non conforme",
+            }
+
+            criticality_labels = {
+                "Low": "Faible",
+                "Medium": "Modéré",
+                "High": "Élevé",
+                "Critical": "Critique",
+            }
+
+            header_cells = "".join(f"<th>{col_labels.get(c, c)}</th>" for c in display_cols)
 
             rows_html = ""
             for _, row in df[display_cols].iterrows():
@@ -923,15 +955,18 @@ if st.session_state.audit_done and st.session_state.current_report:
                         cells += f'<td class="td-id">{val}</td>'
                     elif col == "Category":
                         cat_cls = f"cat-{val}" if val in ["Roles","PIM","MFA","CA","Activity"] else ""
-                        cells += f'<td><span class="cat {cat_cls}">{val}</span></td>'
+                        val_fr = category_labels.get(val, val)
+                        cells += f'<td><span class="cat {cat_cls}">{val_fr}</span></td>'
                     elif col == "Requirement":
                         cells += f'<td class="td-req">{val}</td>'
                     elif col == "Result":
                         pill_cls = "pill-pass" if val == "Pass" else "pill-fail"
-                        cells += f'<td><span class="pill {pill_cls}">{val}</span></td>'
+                        val_fr = result_labels.get(val, val)
+                        cells += f'<td><span class="pill {pill_cls}">{val_fr}</span></td>'
                     elif col == "Criticality":
                         crit_cls = f"crit-{val}"
-                        cells += f'<td><span class="crit {crit_cls}">{val}</span></td>'
+                        val_fr = criticality_labels.get(val, val)
+                        cells += f'<td><span class="crit {crit_cls}">{val_fr}</span></td>'
                     elif col == "Risk Points":
                         try:
                             rp_cls = "rp-high" if float(val) > 5 else "rp-low"
