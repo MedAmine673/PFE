@@ -3,12 +3,13 @@
     "tenant_id": "c47235d5-0241-46ae-94d2-a1b6c5dc9c6b",
     "execution_mode": "local",
     "summary": {
-        "audit_date": "2026-04-04T13:57:17Z",
-        "risk_score": 31,
+        "audit_date": "2026-05-04T09:00:46Z",
+        "risk_score": 32,
         "risk_level": "Critique",
-        "failed_controls": 7,
+        "failed_controls": 8,
         "total_controls": 10
     },
+
     "findings": [
         {
             "Control ID": "AAD-01",
@@ -22,6 +23,8 @@
             "Details": "6 GA trouvé(s) :\nMohamed Amine BEN OUHIBA, Lee Gu, test, Adele Vance, Diego Siciliani, Henrietta Mueller",
             "Recommendation": ""
         },
+
+
         {
             "Control ID": "AAD-02",
             "Category": "Roles",
@@ -34,6 +37,8 @@
             "Details": "Cumuls détectés : azerty (Security Administrator, Application Administrator)",
             "Recommendation": "Réduire le cumul de rôles critiques par utilisateur et appliquer le principe du moindre privilège."
         },
+
+
         {
             "Control ID": "AAD-03",
             "Category": "PIM",
@@ -82,6 +87,7 @@
             "Details": "Durée non conforme : Security Administrator (11.0h)",
             "Recommendation": "Réduire la durée maximale d’activation des rôles critiques afin de limiter l’exposition des privilèges."
         },
+
         {
             "Control ID": "AAD-07",
             "Category": "MFA",
@@ -94,6 +100,7 @@
             "Details": "Administrateurs sans MFA : Lee Gu (LeeG@335lzf.onmicrosoft.com), azerty (azerty@335lzf.onmicrosoft.com), Alex Wilber (AlexW@335lzf.onmicrosoft.com), Adele Vance (AdeleV@335lzf.onmicrosoft.com), Diego Siciliani (DiegoS@335lzf.onmicrosoft.com), Henrietta Mueller (HenriettaM@335lzf.onmicrosoft.com)",
             "Recommendation": "Activer le MFA pour tous les comptes administrateurs concernés."
         },
+
         {
             "Control ID": "AAD-08",
             "Category": "CA",
@@ -106,18 +113,20 @@
             "Details": "Conforme",
             "Recommendation": ""
         },
+
         {
             "Control ID": "AAD-09",
             "Category": "Activity",
             "Requirement": "Administrateur inactif depuis plus de 90 jours",
-            "Result": "Pass",
-            "Passed": true,
+            "Result": "Fail",
+            "Passed": false,
             "Criticality": "Low",
-            "Risk Points": 0,
-            "Affected": 0,
-            "Details": "Conforme",
-            "Recommendation": ""
+            "Risk Points": 1,
+            "Affected": 5,
+            "Details": "Administrateurs inactifs : Lee Gu (LeeG@335lzf.onmicrosoft.com) - 110 jours, Alex Wilber (AlexW@335lzf.onmicrosoft.com) - 110 jours, Adele Vance (AdeleV@335lzf.onmicrosoft.com) - 110 jours, Diego Siciliani (DiegoS@335lzf.onmicrosoft.com) - 110 jours, Henrietta Mueller (HenriettaM@335lzf.onmicrosoft.com) - 110 jours",
+            "Recommendation": "Examiner les comptes administrateurs inactifs et désactiver ou supprimer ceux qui ne sont plus nécessaires."
         },
+        
         {
             "Control ID": "AAD-10",
             "Category": "Activity",

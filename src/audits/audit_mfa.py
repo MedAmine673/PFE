@@ -14,7 +14,6 @@ def audit_mfa(auth_data, roles_data, baseline):
     active_assignments = roles_data.get("active_assignments", [])
     eligible_assignments = roles_data.get("eligible_assignments", [])
     role_definitions = roles_data.get("role_definitions", [])
-
     critical_roles = aad07.get("critical_roles", [])
 
     name_to_role_id = {
@@ -162,5 +161,19 @@ def audit_mfa(auth_data, roles_data, baseline):
                 aad08.get("severity", "Low")
             )
         )
-
+        
     return audit_results
+
+
+
+
+
+
+
+
+
+
+
+
+
+

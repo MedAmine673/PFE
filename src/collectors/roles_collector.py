@@ -1,6 +1,5 @@
 import requests
 
-
 def fetch_raw_roles(token):
     headers = {
         "Authorization": f"Bearer {token}",

@@ -25,7 +25,6 @@ except Exception as e:
     IMPORT_ERROR = str(e)
     logging.exception("Erreur import modules src: %s", str(e))
 
-
 def get_env_var(name: str, required: bool = True, default: str = None) -> str:
     value = os.getenv(name, default)
     if required and not value:

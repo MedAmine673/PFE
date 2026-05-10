@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
+import math
 
 from src.tenants import get_all_tenants
 from src.main import run_and_save_audit
@@ -16,201 +17,578 @@ st.set_page_config(
 # ─── CSS ──────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+/* ── Base ── */
 html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    background-color: #f8f9fb !important;
+    color: #1a202c;
 }
 
-/* Layout */
+/* ── Layout ── */
 .block-container {
     padding-top: 0 !important;
-    padding-bottom: 2rem !important;
-    max-width: 1200px;
+    padding-bottom: 3rem !important;
+    max-width: 1600px;
 }
 
-/* Hide Streamlit chrome */
+/* ── Hide Streamlit chrome ── */
 #MainMenu, footer, header { visibility: hidden; }
 .stDeployButton { display: none; }
 
-/* ── Header ── */
+/* ────────────────────────────────────────────
+   HEADER
+──────────────────────────────────────────── */
 .app-header {
-    padding: 28px 0 20px;
-    margin-bottom: 4px;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 28px 0 24px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid #dbe3ef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
-.app-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: #111827;
-    letter-spacing: -0.3px;
+.app-title-main {
+    font-size: 40px;
+    font-weight: 800;
+    color: #0b1b53;
+    letter-spacing: -0.9px;
+    line-height: 1.15;
     margin: 0;
 }
 
-/* ── Section heading ── */
+/* ────────────────────────────────────────────
+   TENANT SECTION
+──────────────────────────────────────────── */
+.tenant-section {
+    margin-top: 4px;
+    margin-bottom: 14px;
+}
+.tenant-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+.tenant-sub {
+    font-size: 16px;
+    color: #64748b;
+    margin-top: 0;
+    margin-bottom: 14px;
+}
+
+/* ────────────────────────────────────────────
+   SECTION HEADING
+──────────────────────────────────────────── */
 .section-heading {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.4px;
-    color: #6b7280;
-    margin: 28px 0 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-/* ── Panel (generic white card) ── */
-.panel {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 20px 22px;
-}
-
-/* ── KPI cards ── */
-.kpi-card {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 20px 22px;
-    border-top: 3px solid #e5e7eb;
-}
-.kpi-card.accent-red   { border-top-color: #dc2626; }
-.kpi-card.accent-green { border-top-color: #16a34a; }
-.kpi-card.accent-blue  { border-top-color: #1a56a0; }
-
-.kpi-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.9px;
-    color: #6b7280;
-    margin-bottom: 10px;
-}
-.kpi-value {
-    font-size: 32px;
-    font-weight: 700;
-    color: #111827;
-    line-height: 1;
-    margin-bottom: 5px;
-}
-.kpi-value.red   { color: #dc2626; }
-.kpi-value.green { color: #16a34a; }
-.kpi-value.blue  { color: #1a56a0; }
-.kpi-sub {
-    font-size: 12px;
-    color: #9ca3af;
-    font-weight: 400;
-}
-
-/* ── Risk badge ── */
-.risk-badge {
-    display: inline-block;
-    padding: 5px 12px;
-    border-radius: 4px;
     font-size: 13px;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    color: #64748b;
+    margin: 36px 0 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dbe3ef;
+}
+
+/* ────────────────────────────────────────────
+   ACTION CARDS
+──────────────────────────────────────────── */
+.action-card {
+    background: #ffffff;
+    border: 1px solid #dbe3ef;
+    border-radius: 14px;
+    padding: 18px 20px 16px;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+    min-height: 130px;
+}
+.action-card-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+}
+.action-card-sub {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 14px;
+}
+
+/* ────────────────────────────────────────────
+   KPI CARDS
+──────────────────────────────────────────── */
+.kpi-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 22px 24px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.kpi-card:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+}
+.kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+}
+.kpi-card.accent-red::after    { background: linear-gradient(90deg, #ef4444, #f87171); }
+.kpi-card.accent-orange::after { background: linear-gradient(90deg, #f97316, #fb923c); }
+.kpi-card.accent-blue::after   { background: linear-gradient(90deg, #1e40af, #3b82f6); }
+.kpi-card.accent-green::after  { background: linear-gradient(90deg, #16a34a, #4ade80); }
+.kpi-card.accent-gray::after   { background: #e2e8f0; }
+
+.kpi-label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+}
+.kpi-value {
+    font-size: 36px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1;
+    letter-spacing: -1px;
+    margin-bottom: 6px;
+}
+.kpi-value-frac {
+    font-size: 22px;
+    font-weight: 500;
+    color: #cbd5e1;
+    letter-spacing: 0;
+}
+/* ── AMÉLIORATION 1 : kpi-sub plus lisible ── */
+.kpi-sub {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+/* ────────────────────────────────────────────
+   RISK BADGE
+──────────────────────────────────────────── */
+.risk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 700;
+}
+.risk-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
 .risk-faible   { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-.risk-modere   { background: #fefce8; color: #a16207; border: 1px solid #fef08a; }
+.risk-faible::before   { background: #22c55e; }
+.risk-modere   { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.risk-modere::before   { background: #f59e0b; }
 .risk-eleve    { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
-.risk-critique { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.risk-eleve::before    { background: #f97316; }
+.risk-critique { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.risk-critique::before { background: #ef4444; }
 
-/* ── Score bar ── */
+/* ────────────────────────────────────────────
+   SCORE BAR — AMÉLIORATION 2 : plus épaisse
+──────────────────────────────────────────── */
 .score-bar-track {
-    background: #f3f4f6;
-    border-radius: 4px;
-    height: 6px;
-    margin-top: 12px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    height: 8px;
+    margin-top: 16px;
     overflow: hidden;
 }
 .score-bar-fill {
     height: 100%;
-    border-radius: 4px;
+    border-radius: 999px;
 }
 
-/* ── Buttons ── */
+/* ────────────────────────────────────────────
+   BUTTONS
+──────────────────────────────────────────── */
 .stButton > button {
-    border-radius: 6px !important;
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 600 !important;
-    font-size: 13px !important;
-    transition: all 0.15s !important;
+    border-radius: 12px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    height: 48px !important;
+    letter-spacing: -0.1px !important;
+    transition: all 0.18s ease !important;
 }
 .stButton > button[kind="primary"] {
-    background: #1a56a0 !important;
-    border-color: #1a56a0 !important;
+    background: linear-gradient(135deg, #2450d3 0%, #3262e4 100%) !important;
+    border: none !important;
+    box-shadow: 0 3px 10px rgba(37,99,235,0.28), inset 0 1px 0 rgba(255,255,255,0.10) !important;
+    color: #fff !important;
 }
 .stButton > button[kind="primary"]:hover {
-    background: #154280 !important;
-    border-color: #154280 !important;
-    box-shadow: 0 2px 8px rgba(26,86,160,0.25) !important;
+    background: linear-gradient(135deg, #1e44bd 0%, #2b57d5 100%) !important;
+    box-shadow: 0 6px 16px rgba(37,99,235,0.34) !important;
+    transform: translateY(-1px) !important;
+}
+.stButton > button:not([kind="primary"]) {
+    background: #eef3ff !important;
+    border: 1px solid #bcd0ff !important;
+    color: #2c55d8 !important;
+    font-weight: 700 !important;
 }
 .stButton > button:not([kind="primary"]):hover {
-    border-color: #9ca3af !important;
+    background: #e2ebff !important;
+    border-color: #9fb8ff !important;
+    color: #2148c7 !important;
 }
 
-/* ── Selectbox ── */
+/* ────────────────────────────────────────────
+   SELECTBOX
+──────────────────────────────────────────── */
+.stSelectbox { width: 100% !important; }
+.stSelectbox > div { width: 100% !important; }
 .stSelectbox > div > div {
-    border-radius: 6px !important;
-    border-color: #d1d5db !important;
-    font-size: 13px !important;
+    min-height: 54px !important;
+    border-radius: 14px !important;
+    border: 1.5px solid #d7deea !important;
+    background: #ffffff !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03) !important;
+    transition: all 0.2s ease !important;
+    overflow: visible !important;
+}
+.stSelectbox > div > div:hover {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 4px 12px rgba(59,130,246,0.10) !important;
+}
+.stSelectbox div[data-baseweb="select"] > div {
+    min-height: 54px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+.stSelectbox span {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    line-height: 1.4 !important;
 }
 
-/* ── Tabs ── */
+/* ────────────────────────────────────────────
+   TABS
+──────────────────────────────────────────── */
 .stTabs [data-baseweb="tab-list"] {
     gap: 0;
-    border-bottom: 2px solid #e5e7eb;
-    background: transparent;
+    background: transparent !important;
+    border-bottom: 1px solid #e2e8f0;
 }
 .stTabs [data-baseweb="tab"] {
     border-radius: 0 !important;
-    padding: 10px 20px !important;
+    padding: 11px 22px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #94a3b8 !important;
+    border-bottom: 2px solid transparent !important;
+    margin-bottom: -1px !important;
+    background: transparent !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    transition: color 0.15s !important;
+}
+.stTabs [data-baseweb="tab"]:hover { color: #475569 !important; }
+.stTabs [aria-selected="true"] {
+    color: #1e40af !important;
+    font-weight: 700 !important;
+    border-bottom-color: #2563eb !important;
+}
+
+/* ────────────────────────────────────────────
+   ALERTS — AMÉLIORATION 3 : plus compacte
+──────────────────────────────────────────── */
+.stAlert {
+    border-radius: 10px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
     font-size: 13px !important;
     font-weight: 500 !important;
-    color: #6b7280 !important;
-    border-bottom: 2px solid transparent !important;
-    margin-bottom: -2px !important;
-    background: transparent !important;
-}
-.stTabs [aria-selected="true"] {
-    color: #1a56a0 !important;
-    font-weight: 600 !important;
-    border-bottom-color: #1a56a0 !important;
+    padding: 10px 16px !important;
 }
 
-/* ── Dataframe ── */
-.stDataFrame {
-    border-radius: 8px !important;
-    border: 1px solid #e5e7eb !important;
-    overflow: hidden !important;
-}
-
-/* ── Alerts ── */
-.stAlert { border-radius: 6px !important; }
-
-/* ── Expander ── */
+/* ────────────────────────────────────────────
+   EXPANDER
+──────────────────────────────────────────── */
 .streamlit-expanderHeader {
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    color: #374151 !important;
-    background: #f9fafb !important;
-    border-radius: 6px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    background: #ffffff !important;
+    border-radius: 12px !important;
+    border: 1px solid #dbe3ef !important;
+    padding: 14px 18px !important;
 }
 
-/* ── Caption ── */
-.stCaption { color: #9ca3af !important; font-size: 12px !important; }
+/* ────────────────────────────────────────────
+   CAPTION
+──────────────────────────────────────────── */
+.stCaption {
+    color: #94a3b8 !important;
+    font-size: 12px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+/* ────────────────────────────────────────────
+   RESULT HEADING — AMÉLIORATION 4 : date plus lisible
+──────────────────────────────────────────── */
+.result-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 28px 0 18px;
+}
+.result-heading-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.3px;
+}
+.result-heading-date {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 4px 10px;
+}
+
+/* ────────────────────────────────────────────
+   CONTROL TABLE — AMÉLIORATION 5 : padding réduit
+   + zebra striping + colonnes courtes compactes
+──────────────────────────────────────────── */
+.ctrl-table-wrap {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow-x: auto;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    background: #fff;
+    margin-top: 8px;
+}
+table.ctrl-table {
+    width: 100%;
+    min-width: 1400px;
+    border-collapse: collapse;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #fff;
+}
+.ctrl-table thead tr {
+    background: #f1f5f9;
+    border-bottom: 2px solid #e2e8f0;
+}
+.ctrl-table th {
+    padding: 11px 14px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #1e293b;
+    white-space: nowrap;
+}
+/* colonnes courtes centrées */
+.ctrl-table th:nth-child(4),
+.ctrl-table th:nth-child(6),
+.ctrl-table th:nth-child(7) {
+    text-align: center;
+}
+.ctrl-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.1s;
+}
+.ctrl-table tbody tr:last-child { border-bottom: none; }
+/* zebra striping */
+.ctrl-table tbody tr:nth-child(even) { background: #fafbfc; }
+.ctrl-table tbody tr:hover { background: #eff6ff; }
+.ctrl-table tbody tr.row-fail { border-left: 3px solid #fca5a5; }
+.ctrl-table tbody tr.row-pass { border-left: 3px solid transparent; }
+.ctrl-table td {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #374151;
+    vertical-align: top;
+    line-height: 1.5;
+}
+.ctrl-table td.td-id {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+.ctrl-table td.td-req  { font-weight: 600; color: #1e293b; }
+.ctrl-table td.td-detail,
+.ctrl-table td.td-reco { font-size: 12.5px; color: #1e293b; }
+/* colonnes courtes centrées */
+.ctrl-table td:nth-child(4),
+.ctrl-table td:nth-child(6),
+.ctrl-table td:nth-child(7) {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Result pill */
+.pill {
+    display: inline-block;
+    padding: 3px 11px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+.pill-pass { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.pill-fail { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+/* Criticality */
+.crit {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+.crit::before {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.crit-Critical { color: #b91c1c; }
+.crit-Critical::before { background: #ef4444; box-shadow: 0 0 0 2px #fee2e2; }
+.crit-High     { color: #c2410c; }
+.crit-High::before     { background: #f97316; box-shadow: 0 0 0 2px #ffedd5; }
+.crit-Medium   { color: #b45309; }
+.crit-Medium::before   { background: #f59e0b; box-shadow: 0 0 0 2px #fef3c7; }
+.crit-Low      { color: #15803d; }
+.crit-Low::before      { background: #22c55e; box-shadow: 0 0 0 2px #dcfce7; }
+
+/* Category tag */
+.cat {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 5px;
+    font-size: 11.5px;
+    font-weight: 700;
+}
+.cat-Roles    { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.cat-PIM      { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+.cat-MFA      { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+.cat-CA       { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.cat-Activity { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+/* Risk points */
+.rp-high { color: #b91c1c; font-weight: 700; }
+.rp-low  { color: #64748b; font-weight: 600; }
+
+/* ────────────────────────────────────────────
+   CHART WRAPPER
+──────────────────────────────────────────── */
+.chart-wrap {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px 20px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.chart-wrap-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
+.chart-wrap-sub {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+}
+
+/* ────────────────────────────────────────────
+   EMPTY STATE
+──────────────────────────────────────────── */
+.empty-state {
+    background: #ffffff;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 72px 40px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.empty-state-icon {
+    font-size: 44px;
+    margin-bottom: 18px;
+    display: block;
+    opacity: 0.35;
+}
+.empty-state-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+}
+.empty-state-sub {
+    font-size: 15px;
+    color: #94a3b8;
+    line-height: 1.8;
+}
+
+/* Tenant ID box */
+.tenant-id-box {
+    background: #f8fafc;
+    border: 1px solid #d7deea;
+    border-radius: 14px;
+    min-height: 54px;
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    font-size: 15px;
+    color: #334155;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tenant-id-box strong {
+    color: #0f172a;
+    margin-right: 6px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f8f9fb; }
+::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 </style>
 """, unsafe_allow_html=True)
-
 
 # ─── Header ───────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="app-header">
-    <div class="app-title">Audit Sécurité Microsoft 365</div>
+    <div class="app-title-main">Audit de sécurité Microsoft 365</div>
 </div>
 """, unsafe_allow_html=True)
-
 
 # ─── Session state ────────────────────────────────────────────────────────────
 for key, default in [
@@ -222,14 +600,12 @@ for key, default in [
     if key not in st.session_state:
         st.session_state[key] = default
 
-
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 def format_audit_label(audit_run):
     dt = audit_run["audit_date"]
     date_part, time_part = dt.split("T")
     time_part = time_part.split(".")[0]
-    return f"Audit #{audit_run['id']} — {date_part}  {time_part}"
-
+    return f"Audit #{audit_run['id']} — {date_part} {time_part}"
 
 def build_history_dataframe(audit_runs_data):
     if not audit_runs_data:
@@ -246,7 +622,6 @@ def build_history_dataframe(audit_runs_data):
         df = df.tail(15).reset_index(drop=True)
     return df
 
-
 def risk_badge_html(level):
     css_map = {
         "Faible":   "risk-faible",
@@ -257,15 +632,21 @@ def risk_badge_html(level):
     css = css_map.get(level, "")
     return f'<span class="risk-badge {css}">{level}</span>'
 
-
 def risk_bar_color(level):
     return {
-        "Faible":   "#16a34a",
-        "Modéré":   "#ca8a04",
-        "Élevé":    "#ea580c",
-        "Critique": "#dc2626",
-    }.get(level, "#9ca3af")
+        "Faible":   "#22c55e",
+        "Modéré":   "#f59e0b",
+        "Élevé":    "#f97316",
+        "Critique": "#ef4444",
+    }.get(level, "#94a3b8")
 
+def kpi_accent(level):
+    return {
+        "Faible":   "accent-green",
+        "Modéré":   "accent-orange",
+        "Élevé":    "accent-orange",
+        "Critique": "accent-red",
+    }.get(level, "accent-gray")
 
 def build_line_chart(df, y_col, y_title, line_color):
     base = alt.Chart(df).encode(
@@ -276,10 +657,11 @@ def build_line_chart(df, y_col, y_title, line_color):
             axis=alt.Axis(
                 labelAngle=-30,
                 labelFontSize=11,
-                labelColor="#9ca3af",
-                domainColor="#e5e7eb",
-                tickColor="#e5e7eb",
-                gridColor="#f3f4f6",
+                labelColor="#94a3b8",
+                labelFont="Plus Jakarta Sans",
+                domainColor="#e2e8f0",
+                tickColor="#e2e8f0",
+                gridColor="#f1f5f9",
             )
         ),
         y=alt.Y(
@@ -287,40 +669,36 @@ def build_line_chart(df, y_col, y_title, line_color):
             title=y_title,
             axis=alt.Axis(
                 labelFontSize=11,
-                labelColor="#9ca3af",
-                titleColor="#6b7280",
+                labelColor="#94a3b8",
+                labelFont="Plus Jakarta Sans",
+                titleColor="#94a3b8",
                 titleFontSize=11,
-                gridColor="#f3f4f6",
+                titleFont="Plus Jakarta Sans",
+                gridColor="#f1f5f9",
                 domainOpacity=0,
             )
         ),
         tooltip=[
             alt.Tooltip("display_date:N",    title="Date"),
-            alt.Tooltip("risk_score:Q",       title="Score"),
-            alt.Tooltip("failed_controls:Q",  title="Non conformes"),
-            alt.Tooltip("risk_level:N",       title="Niveau"),
+            alt.Tooltip("risk_score:Q",      title="Score"),
+            alt.Tooltip("failed_controls:Q", title="Non conformes"),
+            alt.Tooltip("risk_level:N",      title="Niveau"),
         ]
     )
-    area   = base.mark_area(opacity=0.06, color=line_color, interpolate="monotone")
-    line   = base.mark_line(strokeWidth=2, color=line_color, interpolate="monotone")
-    points = base.mark_circle(size=55, color=line_color, opacity=1)
+    area = base.mark_area(opacity=0.07, color=line_color, interpolate="monotone")
+    line = base.mark_line(strokeWidth=2.5, color=line_color, interpolate="monotone")
+    points = base.mark_circle(size=60, color=line_color, opacity=1)
     return (area + line + points).properties(
-        height=210,
+        height=200,
         background="#ffffff",
     ).configure_view(strokeWidth=0)
 
-
-def style_result(val):
-    if val == "Fail":
-        return "color: #dc2626; font-weight: 700"
-    if val == "Pass":
-        return "color: #16a34a; font-weight: 700"
-    return ""
-
-
-def style_criticality(val):
-    return ""
-
+def safe_str(val):
+    if val is None:
+        return ""
+    if isinstance(val, float) and math.isnan(val):
+        return ""
+    return str(val)
 
 # ─── Load tenants ─────────────────────────────────────────────────────────────
 tenants = get_all_tenants()
@@ -330,13 +708,17 @@ if not tenants:
 
 tenant_names = [t["name"] for t in tenants]
 
-
 # ══════════════════════════════════════════════════════════════════════════════
 # 1 · Sélection du tenant
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown('<div class="section-heading">Tenant cible</div>', unsafe_allow_html=True)
+st.markdown("""
+<div class="tenant-section">
+    <div class="tenant-title">Tenant cible</div>
+    <div class="tenant-sub">Sélectionnez le tenant Microsoft 365 à auditer.</div>
+</div>
+""", unsafe_allow_html=True)
 
-col_sel, col_id = st.columns([3, 2])
+col_sel, col_id = st.columns([3.2, 2.2])
 
 with col_sel:
     selected_tenant_name = st.selectbox(
@@ -348,38 +730,36 @@ with col_sel:
 with col_id:
     selected_tenant = next((t for t in tenants if t["name"] == selected_tenant_name), None)
     tid = selected_tenant.get("id", "") if selected_tenant else ""
-    st.caption(f"Tenant ID : {tid}")
+    st.markdown(
+        f'<div class="tenant-id-box"><strong>Tenant ID :</strong> {tid}</div>',
+        unsafe_allow_html=True
+    )
 
 audit_runs = get_audit_runs_by_tenant(selected_tenant_name)
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 2 · Actions
 # ══════════════════════════════════════════════════════════════════════════════
 st.markdown('<div class="section-heading">Actions</div>', unsafe_allow_html=True)
 
-col_new, col_hist = st.columns(2)
+col_new, col_hist = st.columns(2, gap="large")
 
 with col_new:
-    st.markdown(
-        '<div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:10px">'
-        'Nouvel audit</div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown("""
+    <div class="action-card">
+        <div class="action-card-title">Nouvel audit</div>
+        <div class="action-card-sub">Démarrez un nouvel audit de sécurité pour le tenant sélectionné.</div>
+    """, unsafe_allow_html=True)
     launch = st.button("Lancer un audit", type="primary", use_container_width=True)
-    st.markdown(
-        '<div style="font-size:11px;color:#9ca3af;margin-top:6px">'
-        'Collecte les données via Microsoft Graph API et génère un rapport complet.'
-        '</div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with col_hist:
-    st.markdown(
-        '<div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:10px">'
-        'Historique des audits</div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown("""
+    <div class="action-card">
+        <div class="action-card-title">Historique des audits</div>
+        <div class="action-card-sub">Consultez et affichez les audits précédemment exécutés.</div>
+    """, unsafe_allow_html=True)
+
     if audit_runs:
         selected_audit_label = st.selectbox(
             "Audit",
@@ -399,17 +779,18 @@ with col_hist:
         )
         load_old_audit = False
         st.markdown(
-            '<div style="font-size:11px;color:#9ca3af;margin-top:6px">'
+            '<div style="font-size:13px;color:#64748b;margin-top:10px;">'
             "Lancez un premier audit pour alimenter l'historique."
             '</div>',
             unsafe_allow_html=True,
         )
 
-# Messages de retour
-if st.session_state.show_success_message:
-    st.success(f"Audit terminé avec succès pour {st.session_state.audited_tenant_name}.")
-    st.session_state.show_success_message = False
+    st.markdown("</div>", unsafe_allow_html=True)
 
+# Messages de retour — AMÉLIORATION 3 : message plus compact via st.toast
+if st.session_state.show_success_message:
+    st.toast(f"Audit terminé avec succès pour {st.session_state.audited_tenant_name}.", icon="✅")
+    st.session_state.show_success_message = False
 
 # ─── Logique métier ───────────────────────────────────────────────────────────
 if launch:
@@ -436,10 +817,10 @@ if load_old_audit and audit_runs:
         st.session_state.audit_done = True
         st.session_state.current_report = report_data
         st.session_state.audited_tenant_name = selected_tenant_name
-        st.success(f"Audit #{selected_audit_label['id']} chargé pour {selected_tenant_name}.")
+        st.toast(f"Audit #{selected_audit_label['id']} chargé pour {selected_tenant_name}.", icon="📂")
+        st.rerun()
     else:
         st.error("Impossible de charger cet audit.")
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 3 · Résultats
@@ -449,40 +830,39 @@ if st.session_state.audit_done and st.session_state.current_report:
     displayed_tenant = st.session_state.audited_tenant_name or selected_tenant_name
 
     findings = data.get("findings", []) if isinstance(data, dict) else data
-    summary  = data.get("summary",  {}) if isinstance(data, dict) else {}
+    summary = data.get("summary", {}) if isinstance(data, dict) else {}
 
     df = pd.DataFrame(findings)
     if not df.empty and "Passed" in df.columns:
         df = df.drop(columns=["Passed"])
 
-    # ── Section heading with date ─────────────────────────────────────────────
     audit_date_str = ""
     if summary.get("audit_date"):
-        audit_date_str = (
-            "  ·  "
-            + summary["audit_date"].replace("T", " ").split(".")[0]
-        )
-    st.markdown(
-        f'<div class="section-heading">Résultats — {displayed_tenant}{audit_date_str}</div>',
-        unsafe_allow_html=True,
-    )
+        audit_date_str = summary["audit_date"].replace("T", " ").split(".")[0]
 
-    # ── KPI Cards ─────────────────────────────────────────────────────────────
+    # AMÉLIORATION 4 : date dans un badge lisible
+    st.markdown(f"""
+    <div class="result-heading">
+        <div class="result-heading-title">Résultats — {displayed_tenant}</div>
+        <div class="result-heading-date">{audit_date_str}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
     if summary:
         risk_level = summary.get("risk_level", "N/A")
         risk_score = summary.get("risk_score", 0)
-        failed     = summary.get("failed_controls", 0)
-        total      = summary.get("total_controls", len(findings))
-        passed     = total - failed
-        bar_color  = risk_bar_color(risk_level)
-        score_pct  = min(int(risk_score * 2.5), 100)
-        fail_pct   = int((failed / total) * 100) if total else 0
+        failed = summary.get("failed_controls", 0)
+        total = summary.get("total_controls", len(findings))
+        passed = total - failed
+        bar_color = risk_bar_color(risk_level)
+        score_pct = min(int(risk_score * 2.5), 100)
+        fail_pct = int((failed / total) * 100) if total else 0
 
-        c1, c2, c3, c4 = st.columns(4)
+        c1, c2, c3, c4 = st.columns(4, gap="medium")
 
         with c1:
             st.markdown(f"""
-            <div class="kpi-card accent-red">
+            <div class="kpi-card {kpi_accent(risk_level)}">
                 <div class="kpi-label">Niveau de risque</div>
                 {risk_badge_html(risk_level)}
                 <div class="score-bar-track">
@@ -494,7 +874,7 @@ if st.session_state.audit_done and st.session_state.current_report:
 
         with c2:
             st.markdown(f"""
-            <div class="kpi-card">
+            <div class="kpi-card accent-blue">
                 <div class="kpi-label">Score de risque</div>
                 <div class="kpi-value">{risk_score}</div>
                 <div class="kpi-sub">points accumulés</div>
@@ -503,72 +883,72 @@ if st.session_state.audit_done and st.session_state.current_report:
 
         with c3:
             st.markdown(f"""
-            <div class="kpi-card">
+            <div class="kpi-card accent-red">
                 <div class="kpi-label">Non conformes</div>
-                <div class="kpi-value">{failed}<span
-                    style="font-size:17px;color:#d1d5db;font-weight:400"> / {total}</span></div>
-                <div class="kpi-sub">{fail_pct}% des contrôles</div>
+                <div class="kpi-value">{failed}<span class="kpi-value-frac"> / {total}</span></div>
+                <div class="kpi-sub">{fail_pct}% des contrôles en échec</div>
             </div>
             """, unsafe_allow_html=True)
 
         with c4:
             st.markdown(f"""
-            <div class="kpi-card">
+            <div class="kpi-card accent-green">
                 <div class="kpi-label">Conformes</div>
-                <div class="kpi-value">{passed}<span
-                    style="font-size:17px;color:#d1d5db;font-weight:400"> / {total}</span></div>
-                <div class="kpi-sub">{100 - fail_pct}% des contrôles</div>
+                <div class="kpi-value">{passed}<span class="kpi-value-frac"> / {total}</span></div>
+                <div class="kpi-sub">{100 - fail_pct}% des contrôles conformes</div>
             </div>
             """, unsafe_allow_html=True)
 
-    st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
-    # ── Tabs ──────────────────────────────────────────────────────────────────
-    tab_detail, tab_history = st.tabs(["Détail des contrôles", "Évolution historique"])
+    tab_detail, tab_history = st.tabs(["  Détail des contrôles  ", "  Évolution historique  "])
 
-    # ── Tab 1 · Tableau HTML (texte complet, pas de troncature) ──────────────
     with tab_detail:
         if not df.empty:
-            # Colonnes à afficher dans l'ordre
             display_cols = [c for c in
                 ["Control ID", "Category", "Requirement", "Result",
-                 "Criticality", "Risk Points", "Affected", "Details","Recommendation"]
+                 "Criticality", "Risk Points", "Affected", "Details", "Recommendation"]
                 if c in df.columns]
 
-            def _cell_style(col, val):
-                if col == "Result":
-                    if val == "Fail":
-                        return "color:#dc2626;font-weight:700"
-                    if val == "Pass":
-                        return "color:#16a34a;font-weight:700"
-                return ""
-
-            # Construire le HTML
-            header_cells = "".join(
-                f'<th style="padding:10px 14px;text-align:left;font-size:11px;'
-                f'font-weight:700;text-transform:uppercase;letter-spacing:0.8px;'
-                f'color:#6b7280;background:#f9fafb;border-bottom:1px solid #e5e7eb;'
-                f'white-space:nowrap">{c}</th>'
-                for c in display_cols
-            )
+            header_cells = "".join(f"<th>{c}</th>" for c in display_cols)
 
             rows_html = ""
             for _, row in df[display_cols].iterrows():
+                result_val = safe_str(row.get("Result", ""))
+                row_class = "row-fail" if result_val == "Fail" else "row-pass"
                 cells = ""
                 for col in display_cols:
-                    val = row[col] if col in row else ""
-                    val_str = "" if (val is None or (isinstance(val, float) and __import__("math").isnan(val))) else str(val)
-                    style = _cell_style(col, val_str)
-                    cells += (
-                        f'<td style="padding:10px 14px;font-size:13px;color:#374151;'
-                        f'vertical-align:top;border-bottom:1px solid #f3f4f6;'
-                        f'word-break:break-word;{style}">{val_str}</td>'
-                    )
-                rows_html += f"<tr>{cells}</tr>"
+                    val = safe_str(row.get(col, ""))
+                    if col == "Control ID":
+                        cells += f'<td class="td-id">{val}</td>'
+                    elif col == "Category":
+                        cat_cls = f"cat-{val}" if val in ["Roles","PIM","MFA","CA","Activity"] else ""
+                        cells += f'<td><span class="cat {cat_cls}">{val}</span></td>'
+                    elif col == "Requirement":
+                        cells += f'<td class="td-req">{val}</td>'
+                    elif col == "Result":
+                        pill_cls = "pill-pass" if val == "Pass" else "pill-fail"
+                        cells += f'<td><span class="pill {pill_cls}">{val}</span></td>'
+                    elif col == "Criticality":
+                        crit_cls = f"crit-{val}"
+                        cells += f'<td><span class="crit {crit_cls}">{val}</span></td>'
+                    elif col == "Risk Points":
+                        try:
+                            rp_cls = "rp-high" if float(val) > 5 else "rp-low"
+                        except Exception:
+                            rp_cls = "rp-low"
+                        cells += f'<td><span class="{rp_cls}">{val}</span></td>'
+                    elif col == "Details":
+                        cells += f'<td class="td-detail">{val}</td>'
+                    elif col == "Recommendation":
+                        cells += f'<td class="td-reco">{val}</td>'
+                    else:
+                        cells += f'<td>{val}</td>'
+                rows_html += f'<tr class="{row_class}">{cells}</tr>'
 
             html_table = f"""
-            <div style="overflow-x:auto;border:1px solid #e5e7eb;border-radius:8px;">
-              <table style="width:100%;border-collapse:collapse;font-family:Inter,sans-serif;background:#fff">
+            <div class="ctrl-table-wrap">
+              <table class="ctrl-table">
                 <thead><tr>{header_cells}</tr></thead>
                 <tbody>{rows_html}</tbody>
               </table>
@@ -578,43 +958,36 @@ if st.session_state.audit_done and st.session_state.current_report:
         else:
             st.info("Aucun résultat à afficher pour ce tenant.")
 
-    # ── Tab 2 · Graphes d'évolution ───────────────────────────────────────────
     with tab_history:
         history_df = build_history_dataframe(audit_runs)
 
         if not history_df.empty:
-            st.caption(
-                f"{len(history_df)} audit(s) enregistré(s) pour {selected_tenant_name}."
-            )
-            g1, g2 = st.columns(2)
+            st.caption(f"{len(history_df)} audit(s) enregistré(s) pour {selected_tenant_name}.")
+            g1, g2 = st.columns(2, gap="large")
 
             with g1:
-                st.markdown(
-                    '<div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:4px">'
-                    'Score de risque</div>'
-                    '<div style="font-size:11px;color:#9ca3af;margin-bottom:10px">'
-                    'Évolution dans le temps</div>',
-                    unsafe_allow_html=True,
-                )
+                st.markdown("""
+                <div class="chart-wrap">
+                    <div class="chart-wrap-title">Score de risque</div>
+                    <div class="chart-wrap-sub">Évolution dans le temps</div>
+                """, unsafe_allow_html=True)
                 st.altair_chart(
-                    build_line_chart(history_df, "risk_score", "Score", "#1a56a0"),
+                    build_line_chart(history_df, "risk_score", "Score", "#2563eb"),
                     use_container_width=True,
                 )
+                st.markdown("</div>", unsafe_allow_html=True)
 
             with g2:
-                st.markdown(
-                    '<div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:4px">'
-                    'Contrôles non conformes</div>'
-                    '<div style="font-size:11px;color:#9ca3af;margin-bottom:10px">'
-                    'Évolution dans le temps</div>',
-                    unsafe_allow_html=True,
-                )
+                st.markdown("""
+                <div class="chart-wrap">
+                    <div class="chart-wrap-title">Contrôles non conformes</div>
+                    <div class="chart-wrap-sub">Évolution dans le temps</div>
+                """, unsafe_allow_html=True)
                 st.altair_chart(
-                    build_line_chart(history_df, "failed_controls", "Non conformes", "#dc2626"),
+                    build_line_chart(history_df, "failed_controls", "Non conformes", "#ef4444"),
                     use_container_width=True,
                 )
-
-
+                st.markdown("</div>", unsafe_allow_html=True)
         else:
             st.info(
                 "Aucune donnée historique disponible. "
@@ -622,49 +995,40 @@ if st.session_state.audit_done and st.session_state.current_report:
             )
 
 else:
-    # ── État vide ─────────────────────────────────────────────────────────────
-    st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
     st.markdown("""
-    <div style="
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        padding: 52px 40px;
-        text-align: center;
-    ">
-        <div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:6px">
-            Aucun audit sélectionné
-        </div>
-        <div style="font-size:13px;color:#9ca3af;line-height:1.7">
+    <div class="empty-state">
+        <span class="empty-state-icon"></span>
+        <div class="empty-state-title">Aucun audit sélectionné</div>
+        <div class="empty-state-sub">
             Sélectionnez un tenant, puis lancez un nouvel audit<br>
             ou chargez un audit existant depuis l'historique.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Graphes accessibles même sans audit actif
     history_df = build_history_dataframe(audit_runs)
     if not history_df.empty:
-        st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
         with st.expander(f"Évolution historique — {selected_tenant_name}"):
-            g1, g2 = st.columns(2)
+            g1, g2 = st.columns(2, gap="large")
             with g1:
-                st.markdown(
-                    '<div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:10px">'
-                    'Score de risque</div>',
-                    unsafe_allow_html=True,
-                )
+                st.markdown("""
+                <div class="chart-wrap">
+                    <div class="chart-wrap-title">Score de risque</div>
+                """, unsafe_allow_html=True)
                 st.altair_chart(
-                    build_line_chart(history_df, "risk_score", "Score", "#1a56a0"),
+                    build_line_chart(history_df, "risk_score", "Score", "#2563eb"),
                     use_container_width=True,
                 )
+                st.markdown("</div>", unsafe_allow_html=True)
             with g2:
-                st.markdown(
-                    '<div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:10px">'
-                    'Contrôles non conformes</div>',
-                    unsafe_allow_html=True,
-                )
+                st.markdown("""
+                <div class="chart-wrap">
+                    <div class="chart-wrap-title">Contrôles non conformes</div>
+                """, unsafe_allow_html=True)
                 st.altair_chart(
-                    build_line_chart(history_df, "failed_controls", "Non conformes", "#dc2626"),
+                    build_line_chart(history_df, "failed_controls", "Non conformes", "#ef4444"),
                     use_container_width=True,
                 )
+                st.markdown("</div>", unsafe_allow_html=True)

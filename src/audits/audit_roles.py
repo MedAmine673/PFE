@@ -109,6 +109,7 @@ def audit_roles(raw_data, baseline):
             user_name = member.get("displayName", "Inconnu")
             user_roles_map.setdefault(user_name, []).append(role_name)
 
+
     # AAD-02
     if aad02.get("enabled", True):
         max_roles = aad02.get("max_privileged_roles_per_user", 1)
@@ -321,5 +322,4 @@ def audit_roles(raw_data, baseline):
                 aad06.get("severity", "Low")
             )
         )
-
     return audit_results

@@ -1,32 +1,30 @@
+from codecarbon import EmissionsTracker
+tracker = EmissionsTracker()
+tracker.start()
+
 import json
 from datetime import datetime, timezone
-
 from src.auth import get_token
 from src.collectors.roles_collector import fetch_raw_roles
 from src.collectors.auth_collector import fetch_raw_auth
 from src.collectors.activity_collector import fetch_raw_activity
-
 from src.audits.audit_roles import audit_roles
 from src.audits.audit_mfa import audit_mfa
 from src.audits.audit_inactivity import audit_inactivity
-
 from src.tenants import get_all_tenants
 from src.storage.fs_store import save_json
 from src.config import RAW_DATA_PATH
+from src.config import REPORTS_PATH
 from src.engine.severity import classify_risk
 from src.storage.db_store import init_db, save_audit_to_db
-
-REPORTS_PATH = "data/reports"
 
 
 def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-
 def _load_baseline():
     with open("baseline/baseline.json", "r", encoding="utf-8") as f:
         return json.load(f)
-
 
 def _build_report(tenant_id, tenant_name, audit_results, execution_mode):
     risk_score = sum(r.get("Risk Points", 0) for r in audit_results)
@@ -47,15 +45,10 @@ def _build_report(tenant_id, tenant_name, audit_results, execution_mode):
         },
         "findings": audit_results,
     }
-
     return report
 
-
 def run_audit_workflow(tenant_id, tenant_name, execution_mode="local"):
-    print(f"--- Audit pour {tenant_name} | mode={execution_mode} ---")
-
-    if execution_mode not in ["local", "cloud"]:
-        raise ValueError("execution_mode doit être 'local' ou 'cloud'")
+    print(f"--- Audit pour {tenant_name}")
 
     try:
         token = get_token(tenant_id)
@@ -107,7 +100,6 @@ def run_and_save_audit(tenant_id, tenant_name):
 def run_cloud_audit(tenant_id, tenant_name):
     return run_audit_workflow(tenant_id, tenant_name, execution_mode="cloud")
 
-
 if __name__ == "__main__":
     init_db()
     print("Base SQLite initialisée.")
@@ -122,3 +114,6 @@ if __name__ == "__main__":
             print(f"Saut de {t['name']} : ID manquant.")
 
     print("Opération terminée.")
+
+
+tracker.stop()

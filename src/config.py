@@ -14,7 +14,5 @@ TENANTS_FILE = os.getenv("TENANTS_FILE", "tenants.json")
 # 🔹 Chemins de stockage local (mode manuel)
 RAW_DATA_PATH = "data/raw"
 REPORTS_PATH = "data/reports"
-DB_PATH = "data/audit_history.db"
 
-# 🔹 (Optionnel) Tenant principal de l'application (fallback uniquement)
-DEFAULT_TENANT_ID = os.getenv("AZURE_TENANT_ID")
+

@@ -3141,6 +3141,7 @@
                         "microsoft.directory/applications/basic/update",
                         "microsoft.directory/applications/create",
                         "microsoft.directory/applications/delete",
+                        "microsoft.directory/applications/disablement/update",
                         "microsoft.directory/applications/notes/update",
                         "microsoft.directory/applications/owners/update",
                         "microsoft.directory/applications/permissions/update",
@@ -3515,6 +3516,23 @@
                     "allowedResourceActions": [
                         "microsoft.azure.serviceHealth/allEntities/allTasks",
                         "microsoft.azure.supportTickets/allEntities/allTasks",
+                        "microsoft.directory/agentUsers/assignLicense",
+                        "microsoft.directory/agentUsers/basic/update",
+                        "microsoft.directory/agentUsers/create",
+                        "microsoft.directory/agentUsers/delete",
+                        "microsoft.directory/agentUsers/disable",
+                        "microsoft.directory/agentUsers/enable",
+                        "microsoft.directory/agentUsers/invalidateAllRefreshTokens",
+                        "microsoft.directory/agentUsers/lifeCycleInfo/read",
+                        "microsoft.directory/agentUsers/lifeCycleInfo/update",
+                        "microsoft.directory/agentUsers/manager/update",
+                        "microsoft.directory/agentUsers/photo/update",
+                        "microsoft.directory/agentUsers/reprocessLicenseAssignment",
+                        "microsoft.directory/agentUsers/restore",
+                        "microsoft.directory/agentUsers/revokeSignInSessions",
+                        "microsoft.directory/agentUsers/sponsors/update",
+                        "microsoft.directory/agentUsers/usageLocation/update",
+                        "microsoft.directory/agentUsers/userPrincipalName/update",
                         "microsoft.directory/entitlementManagement/allProperties/read",
                         "microsoft.directory/subscribedSkus/standard/read",
                         "microsoft.directory/users/allProperties/read",
@@ -3536,6 +3554,69 @@
                     "id": "88d8e3e3-8f55-4a1e-953a-9b9898b8876b"
                 }
             ]
+        },
+        {
+            "id": "1fe13547-53f6-408d-ac04-7f8eed167b38",
+            "description": "Read all aspects of Microsoft 365 Copilot and AI-related enterprise services in Microsoft 365.",
+            "displayName": "AI Reader",
+            "isBuiltIn": true,
+            "isEnabled": true,
+            "resourceScopes": [
+                "/"
+            ],
+            "templateId": "1fe13547-53f6-408d-ac04-7f8eed167b38",
+            "version": "1",
+            "rolePermissions": [
+                {
+                    "allowedResourceActions": [
+                        "microsoft.azure.serviceHealth/allEntities/allTasks",
+                        "microsoft.directory/administrativeUnits/members/read",
+                        "microsoft.directory/administrativeUnits/standard/read",
+                        "microsoft.directory/agentUsers/lifeCycleInfo/read",
+                        "microsoft.directory/applicationPolicies/standard/read",
+                        "microsoft.directory/applications/owners/read",
+                        "microsoft.directory/applications/policies/read",
+                        "microsoft.directory/applications/standard/read",
+                        "microsoft.directory/contacts/memberOf/read",
+                        "microsoft.directory/contacts/standard/read",
+                        "microsoft.directory/contracts/standard/read",
+                        "microsoft.directory/domains/standard/read",
+                        "microsoft.directory/entitlementManagement/allProperties/read",
+                        "microsoft.directory/groups/appRoleAssignments/read",
+                        "microsoft.directory/groupSettings/standard/read",
+                        "microsoft.directory/groupSettingTemplates/standard/read",
+                        "microsoft.directory/groups/memberOf/read",
+                        "microsoft.directory/groups/members/read",
+                        "microsoft.directory/groups/owners/read",
+                        "microsoft.directory/groups/settings/read",
+                        "microsoft.directory/groups/standard/read",
+                        "microsoft.directory/oAuth2PermissionGrants/standard/read",
+                        "microsoft.directory/organization/standard/read",
+                        "microsoft.directory/organization/trustedCAsForPasswordlessAuth/read",
+                        "microsoft.directory/roleAssignments/standard/read",
+                        "microsoft.directory/roleDefinitions/standard/read",
+                        "microsoft.directory/servicePrincipals/appRoleAssignedTo/read",
+                        "microsoft.directory/servicePrincipals/appRoleAssignments/read",
+                        "microsoft.directory/servicePrincipals/memberOf/read",
+                        "microsoft.directory/servicePrincipals/oAuth2PermissionGrants/read",
+                        "microsoft.directory/servicePrincipals/ownedObjects/read",
+                        "microsoft.directory/servicePrincipals/owners/read",
+                        "microsoft.directory/servicePrincipals/policies/read",
+                        "microsoft.directory/servicePrincipals/standard/read",
+                        "microsoft.directory/subscribedSkus/standard/read",
+                        "microsoft.directory/users/allProperties/read",
+                        "microsoft.office365.copilot/allEntities/allProperties/read",
+                        "microsoft.office365.messageCenter/messages/read",
+                        "microsoft.office365.network/performance/allProperties/read",
+                        "microsoft.office365.serviceHealth/allEntities/allTasks",
+                        "microsoft.office365.usageReports/allEntities/allProperties/read",
+                        "microsoft.office365.webPortal/allEntities/standard/read"
+                    ],
+                    "condition": null
+                }
+            ],
+            "inheritsPermissionsFrom@odata.context": "https://graph.microsoft.com/v1.0/$metadata#roleManagement/directory/roleDefinitions('1fe13547-53f6-408d-ac04-7f8eed167b38')/inheritsPermissionsFrom",
+            "inheritsPermissionsFrom": []
         },
         {
             "id": "8424c6f0-a189-499e-bbd0-26c1753c96d4",
@@ -5075,7 +5156,7 @@
         },
         {
             "id": "adb2368d-a9be-41b5-8667-d96778e081b0",
-            "description": "Create an agent blueprint and its service principal in a tenant. User will be added as an owner of the agent blueprint and its service principal.",
+            "description": "Create an agent identity blueprint and its agent identity blueprint principal in a tenant. User will be added as an owner of the created agent identity blueprint and its agent identity blueprint principal.",
             "displayName": "Agent ID Developer",
             "isBuiltIn": true,
             "isEnabled": true,
@@ -5163,6 +5244,24 @@
                     "allowedResourceActions": [
                         "microsoft.azure.serviceHealth/allEntities/allTasks",
                         "microsoft.azure.supportTickets/allEntities/allTasks",
+                        "microsoft.directory/agentUsers/assignLicense",
+                        "microsoft.directory/agentUsers/basic/update",
+                        "microsoft.directory/agentUsers/create",
+                        "microsoft.directory/agentUsers/delete",
+                        "microsoft.directory/agentUsers/disable",
+                        "microsoft.directory/agentUsers/enable",
+                        "microsoft.directory/agentUsers/invalidateAllRefreshTokens",
+                        "microsoft.directory/agentUsers/lifeCycleInfo/read",
+                        "microsoft.directory/agentUsers/lifeCycleInfo/update",
+                        "microsoft.directory/agentUsers/manager/update",
+                        "microsoft.directory/agentUsers/photo/update",
+                        "microsoft.directory/agentUsers/reprocessLicenseAssignment",
+                        "microsoft.directory/agentUsers/restore",
+                        "microsoft.directory/agentUsers/revokeSignInSessions",
+                        "microsoft.directory/agentUsers/sponsors/update",
+                        "microsoft.directory/agentUsers/usageLocation/update",
+                        "microsoft.directory/agentUsers/userPrincipalName/update",
+                        "microsoft.directory/auditLogs/allProperties/read",
                         "microsoft.directory/externalUserProfiles/standard/read",
                         "microsoft.directory/groups/hiddenMembers/read",
                         "microsoft.directory/groups.unified/createAsOwner",
@@ -5267,7 +5366,8 @@
             "rolePermissions": [
                 {
                     "allowedResourceActions": [
-                        "microsoft.commerce.tenantRelationships/customerDelegatedAdminPrivileges/allProperties/allTasks"
+                        "microsoft.commerce.tenantRelationships/customerDelegatedAdminPrivileges/allProperties/allTasks",
+                        "microsoft.office365.webPortal/allEntities/standard/read"
                     ],
                     "condition": null
                 }
