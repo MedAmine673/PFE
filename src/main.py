@@ -1,7 +1,3 @@
-from codecarbon import EmissionsTracker
-tracker = EmissionsTracker()
-tracker.start()
-
 import json
 from datetime import datetime, timezone
 from src.auth import get_token
@@ -114,6 +110,3 @@ if __name__ == "__main__":
             print(f"Saut de {t['name']} : ID manquant.")
 
     print("Opération terminée.")
-
-
-tracker.stop()

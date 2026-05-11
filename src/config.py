@@ -15,4 +15,7 @@ TENANTS_FILE = os.getenv("TENANTS_FILE", "tenants.json")
 RAW_DATA_PATH = "data/raw"
 REPORTS_PATH = "data/reports"
 
+# 🔹 Stockage cloud Azure Blob Storage
+AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER", "audit-reports")
 

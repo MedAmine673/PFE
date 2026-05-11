@@ -101,13 +101,48 @@ def audit_roles(raw_data, baseline):
             )
         )
 
-    # Construire user_roles_map pour AAD-02 / AAD-03
+        # Construire user_roles_map pour AAD-02
+    # On compte les rôles critiques actifs + éligibles afin de détecter le cumul potentiel de privilèges
     user_roles_map = {}
+
+    # 1) Rôles actifs permanents
     for role in active:
         role_name = role.get("displayName", "Inconnu")
+
         for member in role.get("members", []):
-            user_name = member.get("displayName", "Inconnu")
-            user_roles_map.setdefault(user_name, []).append(role_name)
+            user_name = (
+                member.get("displayName")
+                or member.get("userPrincipalName")
+                or member.get("id")
+                or "Inconnu"
+            )
+
+            user_roles_map.setdefault(user_name, [])
+            if role_name not in user_roles_map[user_name]:
+                user_roles_map[user_name].append(role_name)
+
+    # 2) Rôles éligibles via PIM
+    id_to_name = {
+        rd.get("id"): rd.get("displayName")
+        for rd in role_defs
+        if rd.get("id") and rd.get("displayName")
+    }
+
+    for item in eligible:
+        role_id = item.get("roleDefinitionId")
+        role_name = id_to_name.get(role_id, "Inconnu")
+
+        principal = item.get("principal", {})
+        user_name = (
+            principal.get("displayName")
+            or principal.get("userPrincipalName")
+            or item.get("principalId")
+            or "Inconnu"
+        )
+
+        user_roles_map.setdefault(user_name, [])
+        if role_name not in user_roles_map[user_name]:
+            user_roles_map[user_name].append(role_name)
 
 
     # AAD-02

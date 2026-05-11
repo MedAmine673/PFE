@@ -27,11 +27,6 @@
             }
         },
         {
-            "displayName": "azerty",
-            "userPrincipalName": "azerty@335lzf.onmicrosoft.com",
-            "id": "5f1ee857-d5dc-4286-9e77-9e52a460debb"
-        },
-        {
             "displayName": "Diego Siciliani",
             "userPrincipalName": "DiegoS@335lzf.onmicrosoft.com",
             "id": "6e85fcf4-ced8-44e3-8e6d-20ae1e94a093",
@@ -153,12 +148,12 @@
             "userPrincipalName": "MedAmine@335lzf.onmicrosoft.com",
             "id": "04a75dd8-508e-43f5-85c4-9e07db469c8a",
             "signInActivity": {
-                "lastSignInDateTime": "2026-04-27T10:21:37Z",
-                "lastSignInRequestId": "69b63dc9-9444-4bb3-a9b7-0f865d990a00",
-                "lastNonInteractiveSignInDateTime": "2026-04-27T13:22:53Z",
-                "lastNonInteractiveSignInRequestId": "3cd359f8-9111-4594-9d19-c821a683ab00",
-                "lastSuccessfulSignInDateTime": "2026-04-27T13:22:53Z",
-                "lastSuccessfulSignInRequestId": "3cd359f8-9111-4594-9d19-c821a683ab00"
+                "lastSignInDateTime": "2026-05-06T08:17:42Z",
+                "lastSignInRequestId": "80118b4d-fbac-458f-8f07-e968af75a600",
+                "lastNonInteractiveSignInDateTime": "2026-05-06T08:17:43Z",
+                "lastNonInteractiveSignInRequestId": "de85a4c0-73ce-4f6f-b3af-493a2d2ada00",
+                "lastSuccessfulSignInDateTime": "2026-05-06T08:17:43Z",
+                "lastSuccessfulSignInRequestId": "de85a4c0-73ce-4f6f-b3af-493a2d2ada00"
             }
         },
         {
