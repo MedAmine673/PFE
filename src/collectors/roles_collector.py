@@ -1,5 +1,6 @@
 import requests
 
+
 def fetch_raw_roles(token):
     headers = {
         "Authorization": f"Bearer {token}",
@@ -10,6 +11,7 @@ def fetch_raw_roles(token):
         "role_definitions": [],
         "active_assignments": [],
         "eligible_assignments": [],
+        "permanent_assignments": [],
         "pim_policies": [],
         "policy_assignments": [],
     }
@@ -24,7 +26,7 @@ def fetch_raw_roles(token):
             print("DEBUG role_definitions status:", resp.status_code)
             print("DEBUG role_definitions body:", resp.text)
 
-        # 2) Assignations permanentes (Directory roles + members)
+        # 2) Rôles actuellement actifs dans le tenant
         url_active = "https://graph.microsoft.com/v1.0/directoryRoles?$expand=members"
         resp = requests.get(url_active, headers=headers)
         if resp.status_code == 200:
@@ -33,8 +35,11 @@ def fetch_raw_roles(token):
             print("DEBUG active_assignments status:", resp.status_code)
             print("DEBUG active_assignments body:", resp.text)
 
-        # 3) Assignations éligibles (PIM)
-        url_eligible = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleEligibilitySchedules?$expand=principal"
+        # 3) Assignations éligibles via PIM
+        url_eligible = (
+            "https://graph.microsoft.com/v1.0/"
+            "roleManagement/directory/roleEligibilitySchedules?$expand=principal"
+        )
         resp = requests.get(url_eligible, headers=headers)
         if resp.status_code == 200:
             results["eligible_assignments"] = resp.json().get("value", [])
@@ -42,7 +47,19 @@ def fetch_raw_roles(token):
             print("DEBUG eligible_assignments status:", resp.status_code)
             print("DEBUG eligible_assignments body:", resp.text)
 
-        # 4) Politiques PIM + rules
+        # 4) Assignations actives/permanentes via PIM ou méthode classique
+        url_permanent = (
+            "https://graph.microsoft.com/v1.0/"
+            "roleManagement/directory/roleAssignmentSchedules?$expand=principal"
+        )
+        resp = requests.get(url_permanent, headers=headers)
+        if resp.status_code == 200:
+            results["permanent_assignments"] = resp.json().get("value", [])
+        else:
+            print("DEBUG permanent_assignments status:", resp.status_code)
+            print("DEBUG permanent_assignments body:", resp.text)
+
+        # 5) Politiques PIM + rules
         url_policies = (
             "https://graph.microsoft.com/v1.0/policies/roleManagementPolicies"
             "?$filter=scopeId eq '/' and scopeType eq 'Directory'&$expand=rules"
@@ -54,7 +71,7 @@ def fetch_raw_roles(token):
             print("DEBUG policies status:", resp.status_code)
             print("DEBUG policies body:", resp.text)
 
-        # 5) Assignments (lien entre roleDefinitionId et policyId)
+        # 6) Assignments : lien entre roleDefinitionId et policyId
         url_assign = (
             "https://graph.microsoft.com/v1.0/policies/roleManagementPolicyAssignments"
             "?$filter=scopeId eq '/' and scopeType eq 'Directory'"

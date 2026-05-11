@@ -8,6 +8,7 @@ def audit_roles(raw_data, baseline):
 
     active = raw_data.get("active_assignments", [])
     eligible = raw_data.get("eligible_assignments", [])
+    permanent_assignments = raw_data.get("permanent_assignments", [])
     policies = raw_data.get("pim_policies", [])
     assignments = raw_data.get("policy_assignments", [])
     role_defs = raw_data.get("role_definitions", [])
@@ -20,10 +21,17 @@ def audit_roles(raw_data, baseline):
     aad06 = baseline.get("AAD-06", {})
 
     critical_roles = aad02.get("critical_roles", [])
+
     name_to_id = {
         rd.get("displayName"): rd.get("id")
         for rd in role_defs
         if rd.get("displayName") and rd.get("id")
+    }
+
+    id_to_name = {
+        rd.get("id"): rd.get("displayName")
+        for rd in role_defs
+        if rd.get("id") and rd.get("displayName")
     }
 
     def get_role_id(role_name: str):
@@ -67,7 +75,10 @@ def audit_roles(raw_data, baseline):
             ])
 
         eligible_names = []
-        for item in [e for e in eligible if target_role_id and e.get("roleDefinitionId") == target_role_id]:
+        for item in [
+            e for e in eligible
+            if target_role_id and e.get("roleDefinitionId") == target_role_id
+        ]:
             principal = item.get("principal", {})
             name = (
                 principal.get("displayName")
@@ -101,11 +112,11 @@ def audit_roles(raw_data, baseline):
             )
         )
 
-        # Construire user_roles_map pour AAD-02
-    # On compte les rôles critiques actifs + éligibles afin de détecter le cumul potentiel de privilèges
+    # Construire user_roles_map pour AAD-02
+    # On compte les rôles critiques actifs + éligibles afin de détecter le cumul potentiel.
     user_roles_map = {}
 
-    # 1) Rôles actifs permanents
+    # 1) Rôles actifs
     for role in active:
         role_name = role.get("displayName", "Inconnu")
 
@@ -122,12 +133,6 @@ def audit_roles(raw_data, baseline):
                 user_roles_map[user_name].append(role_name)
 
     # 2) Rôles éligibles via PIM
-    id_to_name = {
-        rd.get("id"): rd.get("displayName")
-        for rd in role_defs
-        if rd.get("id") and rd.get("displayName")
-    }
-
     for item in eligible:
         role_id = item.get("roleDefinitionId")
         role_name = id_to_name.get(role_id, "Inconnu")
@@ -143,7 +148,6 @@ def audit_roles(raw_data, baseline):
         user_roles_map.setdefault(user_name, [])
         if role_name not in user_roles_map[user_name]:
             user_roles_map[user_name].append(role_name)
-
 
     # AAD-02
     if aad02.get("enabled", True):
@@ -174,27 +178,44 @@ def audit_roles(raw_data, baseline):
         )
 
     # AAD-03
+    # Vérifie que les rôles critiques ne sont pas attribués en mode actif/permanent.
+    # Les rôles critiques devraient être attribués en Eligible via PIM.
     if aad03.get("enabled", True):
         violations_pim = []
         pim_roles = aad03.get("critical_roles", critical_roles)
 
-        for role in active:
-            if role.get("displayName") in pim_roles:
-                member_names = [
-                    m.get("displayName", "Inconnu")
-                    for m in role.get("members", [])
-                ]
-                if member_names:
-                    violations_pim.append(f"{role.get('displayName')} ({', '.join(member_names)})")
+        for item in permanent_assignments:
+            role_id = item.get("roleDefinitionId")
+            role_name = id_to_name.get(role_id, "Inconnu")
+
+            if role_name not in pim_roles:
+                continue
+
+            assignment_type = item.get("assignmentType", "")
+
+            # Une activation temporaire PIM ne doit pas être considérée
+            # comme une assignation permanente.
+            if assignment_type and assignment_type.lower() == "activated":
+                continue
+
+            principal = item.get("principal", {})
+            user_name = (
+                principal.get("displayName")
+                or principal.get("userPrincipalName")
+                or item.get("principalId")
+                or "Inconnu"
+            )
+
+            violations_pim.append(f"{role_name} ({user_name})")
 
         audit_results.append(
             create_finding(
                 "AAD-03",
                 "PIM",
-                "Rôles critiques via PIM uniquement",
+                "Rôles critiques via PIM Eligible uniquement",
                 is_empty(violations_pim),
                 int(len(violations_pim)),
-                "Conforme" if not violations_pim else f"Permanents détectés : {'; '.join(violations_pim)}",
+                "Conforme" if not violations_pim else f"Assignations actives/permanentes détectées : {'; '.join(violations_pim)}",
                 aad03.get("severity", "Low")
             )
         )
@@ -357,4 +378,5 @@ def audit_roles(raw_data, baseline):
                 aad06.get("severity", "Low")
             )
         )
+
     return audit_results

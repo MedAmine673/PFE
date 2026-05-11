@@ -3,9 +3,9 @@
     "tenant_id": "c47235d5-0241-46ae-94d2-a1b6c5dc9c6b",
     "execution_mode": "local",
     "summary": {
-        "audit_date": "2026-05-11T10:24:51Z",
-        "risk_score": 23,
-        "risk_level": "Critique",
+        "audit_date": "2026-05-11T10:54:16Z",
+        "risk_score": 14,
+        "risk_level": "Élevé",
         "failed_controls": 5,
         "total_controls": 10
     },
@@ -18,32 +18,32 @@
             "Passed": true,
             "Criticality": "High",
             "Risk Points": 0,
-            "Affected": 2,
-            "Details": "2 GA trouvé(s) :\nMohamed Amine BEN OUHIBA, test",
+            "Affected": 3,
+            "Details": "3 GA trouvé(s) :\nMohamed Amine BEN OUHIBA, test, Alex Wilber",
             "Recommendation": ""
         },
         {
             "Control ID": "AAD-02",
             "Category": "Roles",
             "Requirement": "Pas de cumul de privilèges",
-            "Result": "Fail",
-            "Passed": false,
+            "Result": "Pass",
+            "Passed": true,
             "Criticality": "Critical",
-            "Risk Points": 10,
-            "Affected": 2,
-            "Details": "Cumuls détectés : test (Global Administrator, Application Administrator); azerty (Security Administrator, Application Administrator)",
-            "Recommendation": "Réduire le cumul de rôles critiques par utilisateur et appliquer le principe du moindre privilège."
+            "Risk Points": 0,
+            "Affected": 0,
+            "Details": "Conforme",
+            "Recommendation": ""
         },
         {
             "Control ID": "AAD-03",
             "Category": "PIM",
-            "Requirement": "Rôles critiques via PIM uniquement",
+            "Requirement": "Rôles critiques via PIM Eligible uniquement",
             "Result": "Fail",
             "Passed": false,
             "Criticality": "Medium",
             "Risk Points": 4,
             "Affected": 2,
-            "Details": "Permanents détectés : Global Administrator (Mohamed Amine BEN OUHIBA, test); Application Administrator (test)",
+            "Details": "Assignations actives/permanentes détectées : Global Administrator (test); Global Administrator (Mohamed Amine BEN OUHIBA)",
             "Recommendation": "Attribuer les rôles critiques via PIM au lieu d’assignations permanentes."
         },
         {
@@ -90,8 +90,8 @@
             "Passed": false,
             "Criticality": "High",
             "Risk Points": 7,
-            "Affected": 1,
-            "Details": "Administrateurs sans MFA : azerty (azerty@335lzf.onmicrosoft.com)",
+            "Affected": 2,
+            "Details": "Administrateurs sans MFA : Alex Wilber (AlexW@335lzf.onmicrosoft.com), azerty (azerty@335lzf.onmicrosoft.com)",
             "Recommendation": "Activer le MFA pour tous les comptes administrateurs concernés."
         },
         {
@@ -110,13 +110,13 @@
             "Control ID": "AAD-09",
             "Category": "Activity",
             "Requirement": "Administrateur inactif depuis plus de 90 jours",
-            "Result": "Pass",
-            "Passed": true,
+            "Result": "Fail",
+            "Passed": false,
             "Criticality": "Low",
-            "Risk Points": 0,
-            "Affected": 0,
-            "Details": "Conforme",
-            "Recommendation": ""
+            "Risk Points": 1,
+            "Affected": 1,
+            "Details": "Administrateurs inactifs : Alex Wilber (AlexW@335lzf.onmicrosoft.com) - 117 jours",
+            "Recommendation": "Examiner les comptes administrateurs inactifs et désactiver ou supprimer ceux qui ne sont plus nécessaires."
         },
         {
             "Control ID": "AAD-10",
