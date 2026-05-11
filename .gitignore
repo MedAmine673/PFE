@@ -19,5 +19,12 @@ __pycache__/
 # Windows
 Thumbs.db
 
-local.settings.json
+# Données locales
+data/*.db
+data/*.sqbpro
+data/raw/*
+data/reports/*
 
+# Garder les dossiers vides
+!data/raw/.gitkeep
+!data/reports/.gitkeep
