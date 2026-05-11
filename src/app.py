@@ -296,8 +296,8 @@ html, body, [class*="css"] {
 
 .stTabs [data-baseweb="tab"] {
     border-radius: 0 !important;
-    padding: 11px 22px !important;
-    font-size: 16px !important;
+    padding: 13px 26px !important;
+    font-size: 17px !important;
     font-weight: 600 !important;
     color: #94a3b8 !important;
     border-bottom: 2px solid transparent !important;
@@ -335,9 +335,11 @@ html, body, [class*="css"] {
 }
 
 .stCaption {
-    color: #94a3b8 !important;
-    font-size: 12px !important;
+    color: #64748b !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
+    margin-bottom: 18px !important;
 }
 
 .result-heading {
@@ -494,25 +496,43 @@ table.ctrl-table {
 .rp-high { color: #b91c1c; font-weight: 700; }
 .rp-low  { color: #64748b; font-weight: 600; }
 
-.chart-wrap {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px 20px 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-
-.chart-wrap-title {
-    font-size: 13px;
-    font-weight: 700;
+.chart-title-fixed {
+    font-size: 18px;
+    font-weight: 800;
     color: #0f172a;
-    margin-bottom: 2px;
+    margin: 4px 0 6px;
+    letter-spacing: -0.2px;
 }
 
-.chart-wrap-sub {
-    font-size: 11px;
-    color: #94a3b8;
-    margin-bottom: 12px;
+.chart-sub-fixed {
+    font-size: 14px;
+    font-weight: 500;
+    color: #8091ad;
+    margin-bottom: 14px;
+}
+
+.history-caption {
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 500;
+    margin: 18px 0 20px;
+}
+
+.history-caption strong {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.history-caption {
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 500;
+    margin: 18px 0 20px;
+}
+
+.history-caption strong {
+    color: #0f172a;
+    font-weight: 700;
 }
 
 .empty-state {
@@ -672,26 +692,30 @@ def build_line_chart(df, y_col, y_title, line_color):
             sort=None,
             title=None,
             axis=alt.Axis(
-                labelAngle=-30,
-                labelFontSize=11,
-                labelColor="#94a3b8",
+                labelAngle=-35,
+                labelFontSize=13,
+                labelColor="#7c8aa5",
                 labelFont="Plus Jakarta Sans",
+                labelFontWeight=500,
                 domainColor="#e2e8f0",
                 tickColor="#e2e8f0",
-                gridColor="#f1f5f9",
+                grid=False,
             )
         ),
         y=alt.Y(
             f"{y_col}:Q",
             title=y_title,
             axis=alt.Axis(
-                labelFontSize=11,
-                labelColor="#94a3b8",
+                labelFontSize=13,
+                labelColor="#7c8aa5",
                 labelFont="Plus Jakarta Sans",
-                titleColor="#94a3b8",
-                titleFontSize=11,
+                labelFontWeight=500,
+                titleColor="#7c8aa5",
+                titleFontSize=14,
+                titleFontWeight=600,
                 titleFont="Plus Jakarta Sans",
-                gridColor="#f1f5f9",
+                gridColor="#edf2f7",
+                gridOpacity=0.9,
                 domainOpacity=0,
             )
         ),
@@ -703,14 +727,33 @@ def build_line_chart(df, y_col, y_title, line_color):
         ]
     )
 
-    area = base.mark_area(opacity=0.07, color=line_color, interpolate="monotone")
-    line = base.mark_line(strokeWidth=2.5, color=line_color, interpolate="monotone")
-    points = base.mark_circle(size=60, color=line_color, opacity=1)
+    area = base.mark_area(
+        opacity=0.10,
+        color=line_color,
+        interpolate="monotone"
+    )
+
+    line = base.mark_line(
+        strokeWidth=3.5,
+        color=line_color,
+        interpolate="monotone"
+    )
+
+    points = base.mark_circle(
+        size=80,
+        color=line_color,
+        opacity=1
+    )
 
     return (area + line + points).properties(
-        height=200,
+        height=230,
         background="#ffffff",
-    ).configure_view(strokeWidth=0)
+    ).configure_view(
+        strokeWidth=0
+    ).configure_axis(
+        labelPadding=8,
+        titlePadding=12
+    )
 
 
 def safe_str(val):
@@ -1158,39 +1201,41 @@ if st.session_state.audit_done and st.session_state.current_report:
             )
 
         if not history_df.empty:
-            st.caption(
-                f"{len(history_df)} audit(s) local(aux) enregistré(s) pour {selected_tenant_name}."
+            st.markdown(
+                f"""
+                <div class="history-caption">
+                    {len(history_df)} audit(s) local(aux) enregistré(s) pour <strong>{selected_tenant_name}</strong>.
+                </div>
+                """,
+                unsafe_allow_html=True
             )
 
             g1, g2 = st.columns(2, gap="large")
 
             with g1:
-                st.markdown("""
-                <div class="chart-wrap">
-                    <div class="chart-wrap-title">Score de risque</div>
-                    <div class="chart-wrap-sub">Évolution locale dans le temps</div>
-                """, unsafe_allow_html=True)
+                with st.container(border=True):
+                    st.markdown("""
+                    <div class="chart-title-fixed">Score de risque</div>
+                    <div class="chart-sub-fixed">Évolution locale dans le temps</div>
+                    """, unsafe_allow_html=True)
 
-                st.altair_chart(
-                    build_line_chart(history_df, "risk_score", "Score", "#2563eb"),
-                    use_container_width=True,
-                )
-
-                st.markdown("</div>", unsafe_allow_html=True)
+                    st.altair_chart(
+                        build_line_chart(history_df, "risk_score", "Score", "#2563eb"),
+                        use_container_width=True,
+                    )
 
             with g2:
-                st.markdown("""
-                <div class="chart-wrap">
-                    <div class="chart-wrap-title">Contrôles non conformes</div>
-                    <div class="chart-wrap-sub">Évolution locale dans le temps</div>
-                """, unsafe_allow_html=True)
+                with st.container(border=True):
+                    st.markdown("""
+                    <div class="chart-title-fixed">Contrôles non conformes</div>
+                    <div class="chart-sub-fixed">Évolution locale dans le temps</div>
+                    """, unsafe_allow_html=True)
 
-                st.altair_chart(
-                    build_line_chart(history_df, "failed_controls", "Non conformes", "#ef4444"),
-                    use_container_width=True,
-                )
+                    st.altair_chart(
+                        build_line_chart(history_df, "failed_controls", "Non conformes", "#ef4444"),
+                        use_container_width=True,
+                    )
 
-                st.markdown("</div>", unsafe_allow_html=True)
         else:
             st.info(
                 "Aucune donnée historique locale disponible. "
@@ -1223,6 +1268,7 @@ else:
                 st.markdown("""
                 <div class="chart-wrap">
                     <div class="chart-wrap-title">Score de risque</div>
+                    <div class="chart-wrap-sub">Évolution locale dans le temps</div>
                 """, unsafe_allow_html=True)
 
                 st.altair_chart(
@@ -1236,6 +1282,7 @@ else:
                 st.markdown("""
                 <div class="chart-wrap">
                     <div class="chart-wrap-title">Contrôles non conformes</div>
+                    <div class="chart-wrap-sub">Évolution locale dans le temps</div>
                 """, unsafe_allow_html=True)
 
                 st.altair_chart(
