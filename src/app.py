@@ -625,14 +625,25 @@ def format_blob_label(blob_report):
     name = blob_report.get("name", "")
     last_modified = blob_report.get("last_modified")
 
+    tenant = name.split("/")[0] if "/" in name else "Tenant"
+    filename = name.split("/")[-1]
+
+    date_display = ""
     if last_modified:
         try:
-            date_str = last_modified.strftime("%Y-%m-%d %H:%M")
-            return f"{date_str} - {name}"
+            date_display = last_modified.strftime("%d/%m/%Y à %H:%M")
         except Exception:
-            return name
+            date_display = ""
 
-    return name
+    if not date_display:
+        try:
+            parts = name.split("/")
+            year, month, day = parts[1], parts[2], parts[3]
+            date_display = f"{day}/{month}/{year}"
+        except Exception:
+            date_display = "Date inconnue"
+
+    return f"{tenant} • {date_display}"
 
 
 def build_history_dataframe(audit_runs_data):
