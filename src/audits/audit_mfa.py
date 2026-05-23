@@ -163,17 +163,3 @@ def audit_mfa(auth_data, roles_data, baseline):
         )
         
     return audit_results
-
-
-
-
-
-
-
-
-
-
-
-
-
-

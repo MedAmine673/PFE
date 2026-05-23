@@ -666,6 +666,35 @@ def build_history_dataframe(audit_runs_data):
 
     return df
 
+def build_cloud_history_dataframe(tenant_name):
+    if list_blob_reports is None or load_blob_report is None:
+        return pd.DataFrame()
+
+    try:
+        blob_reports = list_blob_reports(tenant_name)
+    except Exception:
+        return pd.DataFrame()
+
+    rows = []
+
+    for blob in blob_reports:
+        try:
+            report = load_blob_report(blob["name"])
+            summary = report.get("summary", {})
+
+            rows.append({
+                "audit_date": summary.get("audit_date"),
+                "risk_score": summary.get("risk_score", 0),
+                "failed_controls": summary.get("failed_controls", 0),
+                "total_controls": summary.get("total_controls", 0),
+                "risk_level": summary.get("risk_level", "N/A"),
+                "source": "Cloud"
+            })
+        except Exception:
+            continue
+
+    return build_history_dataframe(rows)
+
 
 def risk_badge_html(level):
     css_map = {
@@ -1082,7 +1111,7 @@ if st.session_state.audit_done and st.session_state.current_report:
 
     tab_detail, tab_history = st.tabs([
         "  Détail des contrôles  ",
-        "  Évolution historique locale  "
+        "  Évolution historique  "
     ])
 
     with tab_detail:
@@ -1203,23 +1232,34 @@ if st.session_state.audit_done and st.session_state.current_report:
             st.info("Aucun résultat à afficher pour ce tenant.")
 
     with tab_history:
-        history_df = build_history_dataframe(audit_runs)
+        local_history_df = build_history_dataframe(audit_runs)
+        cloud_history_df = build_cloud_history_dataframe(selected_tenant_name)
 
-        if current_source == "cloud":
-            st.info(
-                "Cette courbe utilise l’historique local SQLite. "
-                "Le rapport affiché vient du Blob Storage et n’est pas encore injecté dans SQLite."
-            )
+        if not local_history_df.empty:
+            local_history_df["source"] = "Local"
+
+        history_df = pd.concat(
+            [local_history_df, cloud_history_df],
+            ignore_index=True
+        )
 
         if not history_df.empty:
-            st.markdown(
-                f"""
-                <div class="history-caption">
-                    {len(history_df)} audit(s) local(aux) enregistré(s) pour <strong>{selected_tenant_name}</strong>.
-                </div>
-                """,
-                unsafe_allow_html=True
+            history_df["audit_date"] = pd.to_datetime(
+                history_df["audit_date"],
+                errors="coerce"
             )
+
+            history_df = history_df.dropna(subset=["audit_date"])
+            history_df = history_df.sort_values("audit_date").reset_index(drop=True)
+
+            history_df["display_date"] = history_df["audit_date"].dt.strftime(
+                "%d/%m %H:%M"
+            )
+
+            history_df = history_df.tail(15).reset_index(drop=True)
+
+            local_count = len(local_history_df)
+            cloud_count = len(cloud_history_df)
 
             g1, g2 = st.columns(2, gap="large")
 
@@ -1227,11 +1267,18 @@ if st.session_state.audit_done and st.session_state.current_report:
                 with st.container(border=True):
                     st.markdown("""
                     <div class="chart-title-fixed">Score de risque</div>
-                    <div class="chart-sub-fixed">Évolution locale dans le temps</div>
+                    <div class="chart-sub-fixed">
+                        Évolution des audits dans le temps
+                    </div>
                     """, unsafe_allow_html=True)
 
                     st.altair_chart(
-                        build_line_chart(history_df, "risk_score", "Score", "#2563eb"),
+                        build_line_chart(
+                            history_df,
+                            "risk_score",
+                            "Score",
+                            "#2563eb"
+                        ),
                         use_container_width=True,
                     )
 
@@ -1239,18 +1286,25 @@ if st.session_state.audit_done and st.session_state.current_report:
                 with st.container(border=True):
                     st.markdown("""
                     <div class="chart-title-fixed">Contrôles non conformes</div>
-                    <div class="chart-sub-fixed">Évolution locale dans le temps</div>
+                    <div class="chart-sub-fixed">
+                        Évolution des audits dans le temps
+                    </div>
                     """, unsafe_allow_html=True)
 
                     st.altair_chart(
-                        build_line_chart(history_df, "failed_controls", "Non conformes", "#ef4444"),
+                        build_line_chart(
+                            history_df,
+                            "failed_controls",
+                            "Non conformes",
+                            "#ef4444"
+                        ),
                         use_container_width=True,
                     )
 
         else:
             st.info(
-                "Aucune donnée historique locale disponible. "
-                "Lancez plusieurs audits locaux pour voir l'évolution."
+                "Aucune donnée historique disponible. "
+                "Lancez des audits locaux ou cloud pour visualiser l’évolution."
             )
 
 else:
@@ -1272,14 +1326,14 @@ else:
     if not history_df.empty:
         st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
 
-        with st.expander(f"Évolution historique locale - {selected_tenant_name}"):
+        with st.expander(f"Évolution historique - {selected_tenant_name}"):
             g1, g2 = st.columns(2, gap="large")
 
             with g1:
                 st.markdown("""
                 <div class="chart-wrap">
                     <div class="chart-wrap-title">Score de risque</div>
-                    <div class="chart-wrap-sub">Évolution locale dans le temps</div>
+                    <div class="chart-wrap-sub">Évolution des audits dans le temps</div>
                 """, unsafe_allow_html=True)
 
                 st.altair_chart(
@@ -1293,7 +1347,7 @@ else:
                 st.markdown("""
                 <div class="chart-wrap">
                     <div class="chart-wrap-title">Contrôles non conformes</div>
-                    <div class="chart-wrap-sub">Évolution locale dans le temps</div>
+                    <div class="chart-wrap-sub">Évolution dans le temps</div>
                 """, unsafe_allow_html=True)
 
                 st.altair_chart(
